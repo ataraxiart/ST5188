@@ -1,4 +1,4 @@
-# apply extract_impute function on all images
+# script to apply extract_impute function on all images
 
 combine_img <- function(subzone) {
   # initialise skipped files list
