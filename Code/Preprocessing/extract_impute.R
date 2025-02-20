@@ -5,7 +5,7 @@ combine_images <- function(subzone) {
   extract_impute <- function(img) {
   
     # import subzone boundary 
-    boundary <- st_read("./Data/Files/subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = T) |>
+    boundary <- st_read("./Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = T) |>
       select(PLN_AREA_N, geometry) |>
       filter(PLN_AREA_N == subzone) |>
       st_union() |>
@@ -44,17 +44,17 @@ combine_images <- function(subzone) {
     
     
     # save imputed df as RDS file
-    saveRDS(df, file = paste0("./Data/Files/savedRDS/", img, ".RDS"))
+    saveRDS(df, file = paste0("./Data/Misc/SavedRDS/", img, ".RDS"))
     print(paste0("Successfully imputed", img))
   }
   
   # apply extract_impute function on all images
-  ls_img <- list.files("./Data/Landsat Files/GEE_landsat8")
+  ls_img <- list.files("./Data/Landsat/GEE_landsat8")
   
   
   # combine all RDS into one big dataframe
   
   
-  write.csv(df, paste0("./Data/", subzone, ".csv"), row.names = FALSE)
+  write.csv(df, paste0("./Data/Final/", subzone, ".csv"), row.names = FALSE)
   print(paste0(subzone, ".csv is ready!"))
 }
