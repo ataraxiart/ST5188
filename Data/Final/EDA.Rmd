@@ -38,7 +38,6 @@ df_changi <- combine_img(subzone = "CHANGI")
 # this section is to do EDA - va
 
 
-
 ```
 
 #### Jurong
@@ -48,7 +47,7 @@ df_changi <- combine_img(subzone = "CHANGI")
 
 # this section is to pre-process JURONG data
 # extract, impute and combine data from images - swa + mira
-df_changi <- combine_img(subzone = "JURONG")
+df_jurong <- combine_img(subzone = "JURONG")
 
 # aggregate temporally and obtain final data - naomi
 
