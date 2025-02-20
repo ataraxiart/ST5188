@@ -13,18 +13,18 @@ impute_img <- function(df_boundary) {
   x_missing <- missing_points$x
   y_missing <- missing_points$y
   
+  if (missing_points/nrow(df_boundary) > 0.95) {
+    warning("Variogram calculation failed - not enough data. Skipping...")
+    return(NULL)
+  }
+  
   # converting data to spatial format
   coordinates(known_points) <- ~ x + y
   coordinates(missing_points) <- ~ x + y
   
-  # fit the Kriging model and perform interpolation
+  # fit the kriging model and perform interpolation
   vgm_model <- variogram(LST ~ 1, known_points)
   fit_model <- fit.variogram(vgm_model, vgm("Sph"))
-  
-  if (nrow(vgm_model) == 0) {
-    warning("Variogram calculation failed - not enough data.")
-    return(NULL)
-  }
   
   # use default variogram if fitting fails
   if (inherits(fit_model, "try-error")) {
