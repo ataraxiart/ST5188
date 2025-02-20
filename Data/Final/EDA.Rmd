@@ -12,7 +12,7 @@ output: html_document
 rm(list = ls())
 
 # source libraries and functions under `Code` files
-scripts = paste0("./Code/Preprocessing/", list.files("./Code/Preprocessing"))
+scripts = paste0("../../Code/Preprocessing/", list.files("../../Code/Preprocessing"))
 lapply(scripts, source)
 
 # extract, impute and combine data from images - swa + mira
