@@ -1,0 +1,31 @@
+---
+title: "ST5188 Exploratory Data Analysis"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+#| echo: FALSE
+#| include: FALSE
+
+# clear working directory
+rm(list = ls())
+
+# source libraries and functions under `Code` files
+scripts = paste0("./Code/Preprocessing/", list.files("./Code/Preprocessing"))
+lapply(scripts, source)
+```
+
+### {.tabset .tabset-fade .tabset-pills}
+Let's perform exploratory data analysis on our dataset!
+
+#### Changi
+```{r}
+
+```
+
+
+#### Jurong
+```{r}
+
+```
