@@ -5,5 +5,6 @@ p_load(stringr,
        dplyr,
        ggplot2,
        sf,
-       terra
-)
+       sp,
+       terra,
+       gstat)
