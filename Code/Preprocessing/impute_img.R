@@ -13,7 +13,7 @@ impute_img <- function(df_boundary) {
   x_missing <- missing_points$x
   y_missing <- missing_points$y
   
-  if (missing_points/nrow(df_boundary) > 0.95) {
+  if (nrow(missing_points)/nrow(df_boundary) > 0.95) {
     warning("Variogram calculation failed - not enough data. Skipping...")
     return(NULL)
   }
