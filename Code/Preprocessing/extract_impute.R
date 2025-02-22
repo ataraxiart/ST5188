@@ -3,7 +3,7 @@
 extract_impute <- function(img, subzone) {
     
   # import subzone boundary 
-  boundary <- st_read("../../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = T) |>
+  boundary <- st_read("../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = T) |>
     select(PLN_AREA_N, geometry) |>
     filter(PLN_AREA_N == subzone) |>
     st_union() |>
@@ -65,6 +65,6 @@ extract_impute <- function(img, subzone) {
     return(NULL)
   }
   
-  saveRDS(df_boundary, file = paste0("../../Data/Misc/SavedRDS/", gsub("\\.tif$", "", basename(img)), ".RDS"))
+  saveRDS(df_boundary, file = paste0("../Data/Misc/SavedRDS/", gsub("\\.tif$", "", basename(img)), ".RDS"))
   print(paste0("Successfully extracted and imputed: ", basename(img)))
 }

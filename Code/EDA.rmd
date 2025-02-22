@@ -12,7 +12,7 @@ output: html_document
 rm(list = ls())
 
 # source libraries and functions under `Code` files
-scripts = list.files("../../Code/Preprocessing", full.names = TRUE)
+scripts = list.files("../Code/Preprocessing", full.names = TRUE)
 lapply(scripts, source)
 ```
 
