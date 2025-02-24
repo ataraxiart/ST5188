@@ -13,7 +13,7 @@ rm(list = ls())
 
 # source libraries and functions under `Code` files
 scripts = list.files("../Code/Preprocessing", full.names = TRUE)
-lapply(scripts[1:5], function(file) {
+lapply(scripts[c(1:4, 6)], function(file) {
   source(file)
   cat("Successfully sourced file:", file, "\n")
 })
@@ -34,7 +34,7 @@ subzone = "CHANGI"
 df_changi <- combine_img(subzone)
 
 # aggregate temporally and obtain final data - naomi
-final_changi <- st_aggregate(df_changi)
+final_changi <- st_aggregate(df_changi, subzone)
 ```
 
 ```{r}
