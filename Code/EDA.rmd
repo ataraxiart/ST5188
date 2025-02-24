@@ -31,39 +31,57 @@ Let's perform exploratory data analysis on our dataset!
 subzone = "CHANGI"
 
 # extract, impute and combine data from images - swarnali + amira
-df_changi <- combine_img(subzone)
+df_changi <- combine_img(subzone) # takes around 3-4 mins
+rownames(df_changi) <- NULL
 
 # aggregate temporally and obtain final data - naomi
-final_changi <- st_aggregate(df_changi, subzone)
+final_changi <- st_aggregate(df_changi, subzone) # long format is saved in Data/Final
 ```
 
 ```{r}
 #| fig.width: 10
-# this section is to do EDA - varsha
+# this section is to do EDA - all
 
 
 ```
 
-#### Jurong
+#### Jurong East
 ```{r}
 #| echo: FALSE
 #| include: FALSE
 
 # this section is to pre-process JURONG data
-subzone = "JURONG"
+subzone = "JURONG EAST"
 
 # extract, impute and combine data from images
-df_jurong <- combine_img(subzone)
+df_jurongeast <- combine_img(subzone)
+rownames(df_jurongeast) <- NULL
 
 # aggregate temporally and obtain final data
-final_changi <- st_aggregate(df_jurong, subzone)
+final_jurongeast <- st_aggregate(df_jurongeast, subzone)
 ```
 
 ```{r}
 #| fig.width: 10
 
-# this section is to do EDA - va
+# this section is to do EDA
 
 
 
+```
+
+
+#### Jurong West
+```{r}
+#| echo: FALSE
+#| include: FALSE
+
+# this section is to pre-process JURONG data
+subzone = "JURONG WEST"
+
+# extract, impute and combine data from images
+df_jurongwest <- combine_img(subzone)
+
+# aggregate temporally and obtain final data
+final_jurongwest <- st_aggregate(df_jurongwest, subzone)
 ```

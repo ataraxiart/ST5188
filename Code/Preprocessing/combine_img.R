@@ -1,6 +1,14 @@
 # script to apply extract_impute function on all images
 
 combine_img <- function(subzone) {
+  # list all pre-existing RDS files in the target directory
+  existing_rds <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
+  
+  # remove pre-existing RDS files if any exist
+  if(length(existing_rds) > 0) {
+    file.remove(existing_rds)
+  }
+  
   # initialise skipped files list
   assign("skipped_files", character(0), envir = .GlobalEnv)
   
