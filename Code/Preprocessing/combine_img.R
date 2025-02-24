@@ -5,13 +5,13 @@ combine_img <- function(subzone) {
   assign("skipped_files", character(0), envir = .GlobalEnv)
   
   # retrieve all tif files
-  ls_img <- list.files("../../Data/Landsat/GEE_landsat8", pattern = "\\.tif$", full.names = TRUE)
+  ls_img <- list.files("../Data/Landsat/GEE_landsat8", pattern = "\\.tif$", full.names = TRUE)
   
   # apply extract_impute function on all images
   lapply(ls_img, function(img) extract_impute(img, subzone))
   
   # retrieve all imputed data files
-  rds_img <- list.files("../../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
+  rds_img <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
   rds_df_combined <- bind_rows(lapply(rds_img, readRDS))
   
   if (length(skipped_files) > 0) {

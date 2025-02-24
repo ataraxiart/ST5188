@@ -8,3 +8,5 @@ load("/Users/amiraazad/Documents/GitHub/ST5188/Data/Misc/SavedRDS/LST_Singapore_
 readRDS("/Users/amiraazad/Documents/GitHub/ST5188/Data/Misc/SavedRDS/LST_Singapore_2013-06-27.RDS")
 load("/Users/amiraazad/Documents/GitHub/ST5188/Data/Misc/SavedRDS/LST_Singapore_2014-05-29.RDS")
 readRDS("/Users/amiraazad/Documents/GitHub/ST5188/Data/Misc/SavedRDS/LST_Singapore_2014-05-29.RDS")
+load("/Users/amiraazad/Documents/GitHub/ST5188/Data/Misc/SavedRDS/LST_Singapore_2014-02-06.RDS")
+readRDS("/Users/amiraazad/Documents/GitHub/ST5188/Data/Misc/SavedRDS/LST_Singapore_2014-02-06.RDS")

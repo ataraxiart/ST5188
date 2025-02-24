@@ -1,6 +1,6 @@
 # script to aggregation function
 
-st_aggregation <- function(data, subzone) {
+st_aggregate <- function(data, subzone) {
   
   data$period <- paste0(
     case_when(
@@ -29,5 +29,8 @@ st_aggregation <- function(data, subzone) {
   final_data <- aggregated_data |>
     pivot_wider(names_from = period, values_from = avg_LST)
 
-  write.csv(final_data, paste0("../../Data/Final/", subzone, ".csv"), row.names = FALSE)
+  write.csv(final_data, paste0("../Data/Final/", subzone, ".csv"), row.names = FALSE)
+  print(paste0("Final dataset is saved as: ", subzone, ".csv"))
+  
+  return(final_data)
 }

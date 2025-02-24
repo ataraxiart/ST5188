@@ -5,7 +5,7 @@ extract_impute <- function(img, subzone) {
   date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"), format="%Y-%m-%d")
   
   # import subzone boundary 
-  boundary <- st_read("../../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = T) |>
+  boundary <- st_read("../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = T) |>
     select(PLN_AREA_N, geometry) |>
     filter(PLN_AREA_N == subzone) |>
     st_union() |>
@@ -17,7 +17,7 @@ extract_impute <- function(img, subzone) {
     project("EPSG:4326") 
   
   # align to a common grid (using LST_Singapore_2013-04-24.tif as template)
-  template <- rast("../../Data/Landsat/GEE_landsat8/LST_Singapore_2013-04-24.tif") |> 
+  template <- rast("../Data/Landsat/GEE_landsat8/LST_Singapore_2013-04-24.tif") |> 
     project("EPSG:4326")
   r_aligned <- resample(r, template)
   
@@ -36,12 +36,13 @@ extract_impute <- function(img, subzone) {
   aggregated_temp_boundary <- temp_boundary |>
     aggregate(fact = 3, fun = "mean", na.rm = T) 
   
-  # temperature lower than min_temp -> set to 0 i.e. take it as missing data
-  aggregated_temp_boundary <- ifel(aggregated_temp_boundary$LST < min_temp, 0, aggregated_temp_boundary$LST)
+  # temperature lower than min_temp | < 0 -> set to 0 i.e. take it as missing data
+  aggregated_temp_boundary <- ifel(aggregated_temp_boundary$LST < min_temp | aggregated_temp_boundary$LST < 0,
+                                   0, aggregated_temp_boundary$LST)
   
-  # extract as dataframe & set 0 values to be NA
+  # extract as dataframe & set <= 0 values to be NA
   df_boundary <- terra::as.data.frame(aggregated_temp_boundary, xy = TRUE, na.rm = TRUE) |>
-    mutate(LST = ifelse(LST == 0, NA, LST),
+    mutate(LST = ifelse(LST <= 0, NA, LST),
            date = date)
   
   file.skipped <- FALSE
@@ -50,20 +51,12 @@ extract_impute <- function(img, subzone) {
   if (all(is.na(df_boundary$LST))) {
     print(paste0("Skipping ", basename(img), " — all LST are missing."))
     file.skipped <- TRUE
-  }
+    }
   
   # if there's missing values, impute
   if (!file.skipped & any(is.na(df_boundary$LST))) {
     df_boundary <- impute_img(df_boundary)
-    
-    # if there's insufficient points to impute, skip
-    if (is.null(df_boundary)) {
-      print(paste0("Skipping ", basename(img), " - not enough data for kriging"))
-      file.skipped <- TRUE
-      
-      return(NULL)
     }
-  }
 
   # save skipped files for checking purposes
   if (file.skipped) {
@@ -71,6 +64,6 @@ extract_impute <- function(img, subzone) {
     return(NULL)
   }
   
-  saveRDS(df_boundary, file = paste0("../../Data/Misc/SavedRDS/", gsub("\\.tif$", "", basename(img)), ".RDS"))
+  saveRDS(df_boundary, file = paste0("../Data/Misc/SavedRDS/", gsub("\\.tif$", "", basename(img)), ".RDS"))
   print(paste0("Successfully extracted and imputed: ", basename(img)))
 }

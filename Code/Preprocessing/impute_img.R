@@ -1,47 +1,23 @@
 # script for imputation of NA values
 
 impute_img <- function(df_boundary) {
+  
+  # convert to spatial object
+  coordinates(df_boundary) <- ~ x + y
+  
+  df_train <- df_boundary[!is.na(df_boundary$LST), ]
+  df_pred <- df_boundary[is.na(df_boundary$LST), ]
+  
+  knn.out <- gstat(formula = LST ~ 1, 
+                   locations = df_train, 
+                   nmax = 10, # number of nearest neighbours
+                   set = list(idp = 0)) # uniform weights
+  
+  knn.pred <- predict(knn.out, newdata = df_pred)
+  
+  df_pred$LST <- knn.pred$var1.pred
+  
+  df_imputed <- rbind(df_train, df_pred)
 
-  # extract known data points
-  known_points <- df_boundary[!is.na(df_boundary$LST), ]
-  x_known <- known_points$x
-  y_known <- known_points$y
-  z_known <- known_points$LST
-  
-  # extract locations where LST is missing
-  missing_points <- df_boundary[is.na(df_boundary$LST), ]
-  x_missing <- missing_points$x
-  y_missing <- missing_points$y
-  
-  if (nrow(missing_points)/nrow(df_boundary) > 0.95) {
-    warning("Variogram calculation failed - not enough data. Skipping...")
-    return(NULL)
-  }
-  
-  # converting data to spatial format
-  coordinates(known_points) <- ~ x + y
-  coordinates(missing_points) <- ~ x + y
-  
-  # fit the kriging model and perform interpolation
-  vgm_model <- variogram(LST ~ 1, known_points)
-  fit_model <- fit.variogram(vgm_model, vgm("Sph"))
-  
-  # use default variogram if fitting fails
-  if (inherits(fit_model, "try-error")) {
-    warning("Variogram fitting failed. Using default parameters.")
-    fit_model <- vgm(psill = 1, model = "Sph", range = 500, nugget = 0)
-  }
-  
-  # ensure variogram range is positive
-  if (fit_model$range[2] < 0) {
-    warning("Negative variogram range detected. Setting default positive range.")
-    fit_model$range[2] <- max(dist(coordinates(known_points))) / 3
-  }
-  
-  kriging_result <- krige(LST ~ 1, known_points, missing_points, model = fit_model)
-  
-  # update dataframe with imputed values
-  df_boundary$LST[is.na(df_boundary$LST)] <- kriging_result$var1.pred
-  
-  return(df_boundary)
+  return(as.data.frame(df_imputed))
 }

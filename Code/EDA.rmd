@@ -13,7 +13,10 @@ rm(list = ls())
 
 # source libraries and functions under `Code` files
 scripts = list.files("../Code/Preprocessing", full.names = TRUE)
-lapply(scripts, source)
+lapply(scripts[1:5], function(file) {
+  source(file)
+  cat("Successfully sourced file:", file, "\n")
+})
 ```
 
 ### {.tabset .tabset-fade .tabset-pills}
@@ -25,17 +28,18 @@ Let's perform exploratory data analysis on our dataset!
 #| include: FALSE
 
 # this section is to pre-process CHANGI data
-# extract, impute and combine data from images - swa + mira
-df_changi <- combine_img(subzone = "CHANGI")
+subzone = "CHANGI"
+
+# extract, impute and combine data from images - swarnali + amira
+df_changi <- combine_img(subzone)
 
 # aggregate temporally and obtain final data - naomi
-
+final_changi <- st_aggregate(df_changi)
 ```
 
 ```{r}
 #| fig.width: 10
-
-# this section is to do EDA - va
+# this section is to do EDA - varsha
 
 
 ```
@@ -46,11 +50,13 @@ df_changi <- combine_img(subzone = "CHANGI")
 #| include: FALSE
 
 # this section is to pre-process JURONG data
-# extract, impute and combine data from images - swa + mira
-# df_jurong <- combine_img(subzone = "JURONG")
+subzone = "JURONG"
 
-# aggregate temporally and obtain final data - naomi
+# extract, impute and combine data from images
+df_jurong <- combine_img(subzone)
 
+# aggregate temporally and obtain final data
+final_changi <- st_aggregate(df_jurong, subzone)
 ```
 
 ```{r}
