@@ -2,10 +2,10 @@
 
 extract_impute <- function(img, subzone) {
   
-  date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"))
+  date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"), format="%Y-%m-%d")
   
   # import subzone boundary 
-  boundary <- st_read("../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = T) |>
+  boundary <- st_read("../../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = T) |>
     select(PLN_AREA_N, geometry) |>
     filter(PLN_AREA_N == subzone) |>
     st_union() |>
@@ -17,7 +17,7 @@ extract_impute <- function(img, subzone) {
     project("EPSG:4326") 
   
   # align to a common grid (using LST_Singapore_2013-04-24.tif as template)
-  template <- rast("../Data/Landsat/GEE_landsat8/LST_Singapore_2013-04-24.tif") |> 
+  template <- rast("../../Data/Landsat/GEE_landsat8/LST_Singapore_2013-04-24.tif") |> 
     project("EPSG:4326")
   r_aligned <- resample(r, template)
   
@@ -71,6 +71,6 @@ extract_impute <- function(img, subzone) {
     return(NULL)
   }
   
-  saveRDS(df_boundary, file = paste0("../Data/Misc/SavedRDS/", gsub("\\.tif$", "", basename(img)), ".RDS"))
+  saveRDS(df_boundary, file = paste0("../../Data/Misc/SavedRDS/", gsub("\\.tif$", "", basename(img)), ".RDS"))
   print(paste0("Successfully extracted and imputed: ", basename(img)))
 }

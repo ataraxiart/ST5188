@@ -7,4 +7,6 @@ p_load(stringr,
        sf,
        sp,
        terra,
-       gstat)
+       gstat,
+       lubridate,
+       tidyr)
