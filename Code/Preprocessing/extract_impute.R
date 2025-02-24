@@ -45,25 +45,18 @@ extract_impute <- function(img, subzone) {
     mutate(LST = ifelse(LST == 0, NA, LST),
            date = date)
   
-  file.skipped <- FALSE
-  
   # if entire df_boundary is NA, skip
   if (all(is.na(df_boundary$LST))) {
     print(paste0("Skipping ", basename(img), " — all LST are missing."))
-    file.skipped <- TRUE
+    assign("skipped_files", c(get("skipped_files", envir = .GlobalEnv), basename(img)), envir = .GlobalEnv)
+    return(NULL)
     }
   
   # if there's missing values, impute
-  if (!file.skipped & any(is.na(df_boundary$LST))) {
+  if (!(all(is.na(df_boundary$LST))) & any(is.na(df_boundary$LST))) {
     df_boundary <- impute_img(df_boundary)
     }
 
-  # save skipped files for checking purposes
-  if (file.skipped) {
-    assign("skipped_files", c(get("skipped_files", envir = .GlobalEnv), basename(img)), envir = .GlobalEnv)
-    return(NULL)
-  }
-  
   saveRDS(df_boundary, file = paste0("../Data/Misc/SavedRDS/", gsub("\\.tif$", "", basename(img)), ".RDS"))
   print(paste0("Successfully extracted and imputed: ", basename(img)))
 }
