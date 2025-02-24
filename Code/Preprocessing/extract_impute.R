@@ -1,7 +1,9 @@
 # script to extract LST data from images & impute NA values
 
 extract_impute <- function(img, subzone) {
-    
+  
+  date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"))
+  
   # import subzone boundary 
   boundary <- st_read("../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = T) |>
     select(PLN_AREA_N, geometry) |>
@@ -13,16 +15,20 @@ extract_impute <- function(img, subzone) {
   # import image
   r <- rast(img) |>
     project("EPSG:4326") 
-  date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"))
+  
+  # align to a common grid (using LST_Singapore_2013-04-24.tif as template)
+  template <- rast("../Data/Landsat/GEE_landsat8/LST_Singapore_2013-04-24.tif") |> 
+    project("EPSG:4326")
+  r_aligned <- resample(r, template)
   
   # save the min. temp of region
-  min_temp <- global(terra::mask(r, vect(boundary)), fun = "min", na.rm = TRUE)[1,1]
+  min_temp <- global(terra::mask(r_aligned, vect(boundary)), fun = "min", na.rm = TRUE)[1,1]
   
   # set NA values in image to be 0
-  r[is.na(r)] <- 0
+  r_aligned[is.na(r_aligned)] <- 0
  
   # mask & crop to subzone region
-  temp_boundary <- terra::mask(r, vect(boundary))
+  temp_boundary <- terra::mask(r_aligned, vect(boundary))
   ext <- ext(boundary)
   temp_boundary <- terra::crop(temp_boundary, ext) 
   
