@@ -1,0 +1,63 @@
+---
+title: "ST5188 PG01 Exploratory Data Analysis"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+#| echo: FALSE
+#| include: FALSE
+
+# clear working directory
+rm(list = ls())
+
+# source libraries and functions under `Code` files
+scripts = list.files("../Code/Preprocessing", full.names = TRUE)
+lapply(scripts, source)
+```
+
+### {.tabset .tabset-fade .tabset-pills}
+Let's perform exploratory data analysis on our dataset!
+
+#### Changi
+```{r}
+#| echo: FALSE
+#| include: FALSE
+
+# this section is to pre-process CHANGI data
+# extract, impute and combine data from images - swa + mira
+df_changi <- combine_img(subzone = "CHANGI")
+
+# aggregate temporally and obtain final data - naomi
+
+```
+
+```{r}
+#| fig.width: 10
+
+# this section is to do EDA - va
+
+
+```
+
+#### Jurong
+```{r}
+#| echo: FALSE
+#| include: FALSE
+
+# this section is to pre-process JURONG data
+# extract, impute and combine data from images - swa + mira
+# df_jurong <- combine_img(subzone = "JURONG")
+
+# aggregate temporally and obtain final data - naomi
+
+```
+
+```{r}
+#| fig.width: 10
+
+# this section is to do EDA - va
+
+
+
+```
