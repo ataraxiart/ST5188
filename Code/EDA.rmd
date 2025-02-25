@@ -13,9 +13,15 @@ rm(list = ls())
 
 # source libraries and functions under `Code` files
 scripts = list.files("../Code/Preprocessing", full.names = TRUE)
-lapply(scripts[c(1:4, 6)], function(file) {
-  source(file)
-  cat("Successfully sourced file:", file, "\n")
+
+lapply(scripts[c(1, 3:5, 10)], function(file) {
+  if (grepl("\\.py$", file)) {
+    source_python(file)
+    cat("Successfully sourced .py file:", file, "\n")
+  } else {
+    source(file)
+    cat("Successfully sourced .R file:", file, "\n")
+  }
 })
 ```
 
@@ -35,7 +41,8 @@ df_changi <- combine_img(subzone) # takes around 3-4 mins
 rownames(df_changi) <- NULL
 
 # aggregate temporally and obtain final data - naomi
-final_changi <- st_aggregate(df_changi, subzone) # long format is saved in Data/Final
+long_changi <- st_aggregate(df_changi, subzone)[1]
+wide_changi <- st_aggregate(df_changi, subzone)[2]
 ```
 
 ```{r}
