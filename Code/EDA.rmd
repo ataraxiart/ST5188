@@ -89,8 +89,8 @@ By using `long_changi`, we can see how the LST values changes over time:
 #| echo: FALSE
 #| fig.width: 10
 
-gif_path <- py$create_lst_animation(long_changi, subzone = "CHANGI", fps = 2)
-image_animate(image_read(gif_path), loop = 0)
+gif_changi <- py$create_lst_animation(long_changi, subzone = "CHANGI", fps = 2)
+include_graphics(gif_changi)
 ```
 
 ```{r}
@@ -137,8 +137,8 @@ By using `long_je`, we can see how the LST values changes over time:
 #| echo: FALSE
 #| fig.width: 10
 
-gif_path <- py$create_lst_animation(long_je, subzone = "JURONG EAST", fps = 2)
-include_graphics(gif_path)
+gif_je <- py$create_lst_animation(long_je, subzone = "JURONG EAST", fps = 2)
+include_graphics(gif_je)
 ```
 
 ```{r}
@@ -178,14 +178,14 @@ long_jw <- st_aggregate(df_jw, subzone)[[1]]
 wide_jw <- st_aggregate(df_jw, subzone)[[2]]
 ```
 
-By using `long_je`, we can see how the LST values changes over time:
+By using `long_jw`, we can see how the LST values changes over time:
 
 ```{r}
 #| echo: FALSE
 #| fig.width: 10
 
-gif_path <- py$create_lst_animation(long_jw, subzone = "JURONG EAST", fps = 2)
-image_animate(image_read(gif_path), loop = 0)
+gif_jw <- py$create_lst_animation(long_jw, subzone = "JURONG WEST", fps = 2)
+include_graphics(gif_jw)
 ```
 
 ```{r}

@@ -53,7 +53,8 @@ def create_lst_animation(df, subzone, fps=5):
         images = [imageio.imread(file) for file in image_files]
         imageio.mimsave(output_path, images, fps = fps)
         print(f"Animation saved to {output_path}")
-
+        
+        # clean up temporary image files
         for file in image_files:
             os.remove(file)
 
