@@ -11,7 +11,7 @@ impute_img <- function(df_boundary) {
   knn.out <- gstat(formula = LST ~ 1, 
                    locations = df_train, 
                    nmax = 10, # number of nearest neighbours
-                   set = list(idp = 0)) # uniform weights
+                   set = list(idp = 1)) # uniform weights
   
   knn.pred <- predict(knn.out, newdata = df_pred)
   

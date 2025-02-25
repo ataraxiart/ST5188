@@ -9,4 +9,7 @@ p_load(stringr,
        terra,
        gstat,
        lubridate,
-       tidyr)
+       tidyr,
+       reticulate,
+       knitr,
+       magick)

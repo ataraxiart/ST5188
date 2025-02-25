@@ -31,7 +31,8 @@ st_aggregate <- function(data, subzone) {
 
   write.csv(aggregated_data, paste0("../Data/Final/", subzone, "_long.csv"), row.names = FALSE)
   write.csv(final_data, paste0("../Data/Final/", subzone, "_wide.csv"), row.names = FALSE)
+  
   print(paste0("Final dataset is saved as: ", subzone, "_long/wide.csv"))
   
-  return(final_data)
+  return(list(aggregated_data, final_data))
 }

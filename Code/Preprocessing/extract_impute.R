@@ -35,7 +35,7 @@ extract_impute <- function(img, subzone) {
   
   # aggregate spatially to reduce the number of points
   aggregated_temp_boundary <- temp_boundary |>
-    aggregate(fact = 3, fun = "mean", na.rm = T) 
+    aggregate(fact = 10/3, fun = "mean", na.rm = T) 
   
   # temperature lower than min_temp -> set to 0 i.e. take it as missing data
   aggregated_temp_boundary <- ifel(aggregated_temp_boundary$LST < min_temp, 0, aggregated_temp_boundary$LST)
