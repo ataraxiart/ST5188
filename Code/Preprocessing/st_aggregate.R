@@ -1,6 +1,6 @@
 # script to aggregate over time
 
-st_aggregate <- function(data, subzone, landsat_no) {
+st_aggregate <- function(data, subzone) {
   
   data$period <- paste0(
     case_when(
@@ -19,7 +19,7 @@ st_aggregate <- function(data, subzone, landsat_no) {
     group_by(x, y, period) |>
     summarise(avg_LST = mean(LST, na.rm = TRUE), .groups = "drop") |>
     mutate( # to arrange in order
-      temp_month = str_extract(period, "^[A-Za-z]+"),   # extracts the first month
+      temp_month = str_extract(period, "^[A-Za-z]+"), # extracts the first month
       temp_year = as.integer(str_extract(period, "\\d{4}")),
       temp_date = as.Date(paste("01", temp_month, temp_year), format = "%d %b %Y")) |>
     arrange(temp_date) |>
@@ -29,8 +29,8 @@ st_aggregate <- function(data, subzone, landsat_no) {
   final_data <- aggregated_data |>
     pivot_wider(names_from = period, values_from = avg_LST)
 
-  write.csv(aggregated_data, paste0("../Data/Final/landsat", landsat_no, subzone, "_long.csv"), row.names = FALSE)
-  write.csv(final_data, paste0("../Data/Final/landsat", landsat_no, subzone, "_wide.csv"), row.names = FALSE)
+  write.csv(aggregated_data, paste0("../Data/Final/final_", subzone, "_long.csv"), row.names = FALSE)
+  write.csv(final_data, paste0("../Data/Final/final_", subzone, "_wide.csv"), row.names = FALSE)
   
   print(paste0("Final dataset is saved as: ", subzone, "_long/wide.csv"))
   

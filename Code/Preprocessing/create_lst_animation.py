@@ -1,6 +1,9 @@
 # script to create animation gif of LST over time
 
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
+import matplotlib.patches as mpatches
+import numpy as np
 import os
 import imageio
 
@@ -30,9 +33,35 @@ def create_lst_animation(df, subzone, fps=5):
             lat = date_df['y'].values # use 'latitude' column
             lst = date_df['avg_LST'].values # use 'avg LST' column
             
-            plt.figure(figsize=(10, 6))
-            plt.scatter(lon, lat, c=lst, cmap='viridis', s=20)
-            plt.colorbar(label='Land Surface Temperature (°C)')
+            # custom color mapping with shades
+            bins = [0, 20, 25, np.inf]  # temperature ranges
+            blue_cmap = LinearSegmentedColormap.from_list("blue_shades", ["#ADD8E6", "#00008B"])
+            yellow_cmap = LinearSegmentedColormap.from_list("yellow_shades", ["#FFD700", "#FFA500"])
+            red_cmap = LinearSegmentedColormap.from_list("red_shades", ["#FA8072", "#8B0000"])
+
+            # normalize LST data to bins
+            lst_normalized = np.digitize(lst, bins) - 1
+
+            plt.figure(figsize=(8, 6))
+
+            # apply colormap based on bins
+            for j in range(len(lon)):
+                if lst_normalized[j] == 0:
+                    plt.scatter(lon[j], lat[j], c=blue_cmap(lst[j]/25), s=20) # normalize lst for cmap
+                elif lst_normalized[j] == 1:
+                    plt.scatter(lon[j], lat[j], c=yellow_cmap((lst[j]-25)/5), s=20) # normalize lst for cmap
+                else:
+                    plt.scatter(lon[j], lat[j], c=red_cmap((lst[j]-30)/(max(lst)-30)), s=20) # normalize lst for cmap
+
+            # create custom colorbar (with text labels)
+            # create legend patches
+            blue_patch = mpatches.Patch(color=blue_cmap(0.5), label='<20')
+            yellow_patch = mpatches.Patch(color=yellow_cmap(0.5), label='20-25')
+            red_patch = mpatches.Patch(color=red_cmap(0.5), label='>25')
+
+            # display legend
+            plt.legend(handles=[blue_patch, yellow_patch, red_patch])
+
             plt.title(f'LST on {date_step}')
             plt.xlabel('Longitude')
             plt.ylabel('Latitude')
@@ -50,7 +79,7 @@ def create_lst_animation(df, subzone, fps=5):
     if image_files:
         # create the GIF
         images = [imageio.imread(file) for file in image_files]
-        imageio.mimsave(output_path, images, fps = fps)
+        imageio.mimsave(output_path, images, fps=fps)
         print(f"Animation saved to {output_path}")
         
         # clean up temporary image files

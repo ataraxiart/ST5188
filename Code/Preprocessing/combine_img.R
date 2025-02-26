@@ -24,10 +24,10 @@ combine_img <- function(subzone, landsat_no) {
   
   if (length(skipped_files) > 0) {
     skipped_df <- data.frame(skipped_files = skipped_files)
-    write.csv(skipped_df, paste0("../Data/Final/landsat", landsat_no, subzone, "_skipped_files.csv"), row.names = FALSE)
+    write.csv(skipped_df, paste0("../Data/Final/landsat", landsat_no, "/", subzone, "_skipped_files.csv"), row.names = FALSE)
     print(paste0("Skipped files list saved as: ", subzone, "_skipped_files.csv"))
   }
   
-  print(paste0("Data is combined and ready to be aggregated temporally!"))
+  print(paste0("Data is combined! Ready for merging and temporal aggregating!"))
   return(rds_df_combined)
 }

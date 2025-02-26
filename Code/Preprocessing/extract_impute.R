@@ -17,7 +17,7 @@ extract_impute <- function(img, subzone, landsat_no) {
     project("EPSG:4326") 
 
   # align to a common grid (using LST_Singapore_2013-04-24.tif as template)
-  template <- rast(paste0("../Data/Landsat/GEE_landsat", landsat_no, "/LST_Singapore_2013-04-24.tif")) |> 
+  template <- rast(paste0("../Data/Landsat/GEE_landsat8/LST_Singapore_2013-04-24.tif")) |> 
     project("EPSG:4326")
   r_aligned <- resample(r, template)
   
