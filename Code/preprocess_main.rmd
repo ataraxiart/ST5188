@@ -199,6 +199,8 @@ By using `final_jw_long`, we can see how the LST values changes over time:
 #| fig.width: 10
 # this chunk is to conduct exploratory data analysis —————
 
+eda(final_jw_long)
+
 gif_jw <- py$create_lst_animation(final_jw_long, subzone = "JURONG WEST", fps = 2)
 include_graphics(gif_jw)
 ```

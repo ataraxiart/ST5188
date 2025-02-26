@@ -32,7 +32,7 @@ def create_lst_animation(df, subzone, fps=5):
             lon = date_df['x'].values # use 'longitude' column
             lat = date_df['y'].values # use 'latitude' column
             lst = date_df['avg_LST'].values # use 'avg LST' column
-            
+          
             # custom color mapping with shades
             bins = [0, 20, 25, np.inf]  # temperature ranges
             blue_cmap = LinearSegmentedColormap.from_list("blue_shades", ["#ADD8E6", "#00008B"])
