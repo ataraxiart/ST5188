@@ -1,6 +1,5 @@
 # script to create animation gif of LST over time
 
-# import the installed packages
 import matplotlib.pyplot as plt
 import os
 import imageio
