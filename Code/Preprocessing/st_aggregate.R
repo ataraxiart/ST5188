@@ -1,4 +1,4 @@
-# script to aggregation function
+# script to aggregate over time
 
 st_aggregate <- function(data, subzone) {
   
