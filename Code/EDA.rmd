@@ -72,14 +72,15 @@ First, we preprocessed our data using the following codes, and obtained a datafr
 ```{r, results='hide'}
 # this section is to pre-process CHANGI data
 subzone <- "CHANGI"
+landsat_no <- 8
 
 # extract, impute and combine data from images - swarnali + amira
-df_changi <- combine_img(subzone) # takes around 3-4 mins
+df_changi <- combine_img(subzone, landsat_no) # takes around 3-4 mins
 rownames(df_changi) <- NULL
 
 # aggregate temporally and obtain final data - naomi
-long_changi <- st_aggregate(df_changi, subzone)[[1]]
-wide_changi <- st_aggregate(df_changi, subzone)[[2]]
+long_changi <- st_aggregate(df_changi, subzone, landsat_no)[[1]]
+wide_changi <- st_aggregate(df_changi, subzone, landsat_no)[[2]]
 ```
 
 

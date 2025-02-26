@@ -1,6 +1,6 @@
 # script to aggregate over time
 
-st_aggregate <- function(data, subzone) {
+st_aggregate <- function(data, subzone, landsat_no) {
   
   data$period <- paste0(
     case_when(
@@ -29,8 +29,8 @@ st_aggregate <- function(data, subzone) {
   final_data <- aggregated_data |>
     pivot_wider(names_from = period, values_from = avg_LST)
 
-  write.csv(aggregated_data, paste0("../Data/Final/", subzone, "_long.csv"), row.names = FALSE)
-  write.csv(final_data, paste0("../Data/Final/", subzone, "_wide.csv"), row.names = FALSE)
+  write.csv(aggregated_data, paste0("../Data/Final/landsat", landsat_no, subzone, "_long.csv"), row.names = FALSE)
+  write.csv(final_data, paste0("../Data/Final/landsat", landsat_no, subzone, "_wide.csv"), row.names = FALSE)
   
   print(paste0("Final dataset is saved as: ", subzone, "_long/wide.csv"))
   

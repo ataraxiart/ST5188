@@ -1,6 +1,6 @@
 # script to extract LST data from images & impute NA values
 
-extract_impute <- function(img, subzone) {
+extract_impute <- function(img, subzone, landsat_no) {
   
   date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"), format="%Y-%m-%d")
   
@@ -17,7 +17,7 @@ extract_impute <- function(img, subzone) {
     project("EPSG:4326") 
 
   # align to a common grid (using LST_Singapore_2013-04-24.tif as template)
-  template <- rast("../Data/Landsat/GEE_landsat8/LST_Singapore_2013-04-24.tif") |> 
+  template <- rast(paste0("../Data/Landsat/GEE_landsat", landsat_no, "/LST_Singapore_2013-04-24.tif")) |> 
     project("EPSG:4326")
   r_aligned <- resample(r, template)
   

@@ -1,6 +1,6 @@
 # script to apply extract_impute function on all images
 
-combine_img <- function(subzone) {
+combine_img <- function(subzone, landsat_no) {
   # list all pre-existing RDS files in the target directory
   existing_rds <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
   
@@ -13,10 +13,10 @@ combine_img <- function(subzone) {
   assign("skipped_files", character(0), envir = .GlobalEnv)
   
   # retrieve all tif files
-  ls_img <- list.files("../Data/Landsat/GEE_landsat8", pattern = "\\.tif$", full.names = TRUE)
+  ls_img <- list.files(paste0("../Data/Landsat/GEE_landsat", landsat_no), pattern = "\\.tif$", full.names = TRUE)
   
   # apply extract_impute function on all images
-  lapply(ls_img, function(img) extract_impute(img, subzone))
+  lapply(ls_img, function(img) extract_impute(img, subzone, landsat_no))
   
   # retrieve all imputed data files
   rds_img <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
@@ -24,7 +24,7 @@ combine_img <- function(subzone) {
   
   if (length(skipped_files) > 0) {
     skipped_df <- data.frame(skipped_files = skipped_files)
-    write.csv(skipped_df, paste0("../Data/Final/", subzone, "_skipped_files.csv"), row.names = FALSE)
+    write.csv(skipped_df, paste0("../Data/Final/landsat", landsat_no, subzone, "_skipped_files.csv"), row.names = FALSE)
     print(paste0("Skipped files list saved as: ", subzone, "_skipped_files.csv"))
   }
   

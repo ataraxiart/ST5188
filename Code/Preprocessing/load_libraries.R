@@ -11,4 +11,5 @@ p_load(stringr,
        lubridate,
        tidyr,
        reticulate,
-       knitr)
+       knitr,
+       tseries)
