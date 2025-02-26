@@ -11,5 +11,4 @@ p_load(stringr,
        lubridate,
        tidyr,
        reticulate,
-       knitr,
-       magick)
+       knitr)
