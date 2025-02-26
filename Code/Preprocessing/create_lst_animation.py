@@ -44,14 +44,18 @@ def create_lst_animation(df, subzone, fps=5):
 
             plt.figure(figsize=(8, 6))
 
-            # apply colormap based on bins
-            for j in range(len(lon)):
-                if lst_normalized[j] == 0:
-                    plt.scatter(lon[j], lat[j], c=blue_cmap(lst[j]/25), s=20) # normalize lst for cmap
-                elif lst_normalized[j] == 1:
-                    plt.scatter(lon[j], lat[j], c=yellow_cmap((lst[j]-25)/5), s=20) # normalize lst for cmap
-                else:
-                    plt.scatter(lon[j], lat[j], c=red_cmap((lst[j]-30)/(max(lst)-30)), s=20) # normalize lst for cmap
+            # convert LST to a NumPy array for efficient indexing
+            lst = np.array(lst)
+
+            # identify indices for each bin
+            id_blue = np.where(lst_normalized == 0)[0]# LST < 25
+            id_yellow = np.where(lst_normalized == 1)[0] # 25 ≤ LST < 30
+            id_red = np.where(lst_normalized == 2)[0] # LST ≥ 30
+
+            # scatter plot for each bin (vectorized)
+            plt.scatter(lon[id_blue], lat[id_blue], c=blue_cmap(lst[id_blue] / 25), s=20)
+            plt.scatter(lon[id_yellow], lat[id_yellow], c=yellow_cmap((lst[id_yellow] - 25) / 5), s=20)
+            plt.scatter(lon[id_red], lat[id_red], c=red_cmap((lst[id_red] - 30) / (max(lst) - 30)), s=20)
 
             # create custom colorbar (with text labels)
             # create legend patches
