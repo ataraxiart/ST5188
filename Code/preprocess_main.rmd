@@ -241,6 +241,9 @@ count_NA <- function(img, subzone) {
   
   cat(sprintf("The maximum number of NA values is in the %s region.\n", max_region))
 }
+
+ls_img <- c(list.files(paste0("../Data/Landsat/GEE_landsat", 7), pattern = "\\.tif$", full.names = TRUE), 
+            list.files(paste0("../Data/Landsat/GEE_landsat", 8), pattern = "\\.tif$", full.names = TRUE))
 ```
 
 ```{r, results='hide'}
@@ -257,9 +260,6 @@ existing_rds <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.na
 if(length(existing_rds) > 0) { 
   file.remove(existing_rds) 
   }
-
-ls_img <- c(list.files(paste0("../Data/Landsat/GEE_landsat", 7), pattern = "\\.tif$", full.names = TRUE), 
-            list.files(paste0("../Data/Landsat/GEE_landsat", 8), pattern = "\\.tif$", full.names = TRUE))
 
 lapply(ls_img, function(img) count_NA(img, "CHANGI"))
 
@@ -328,10 +328,6 @@ include_graphics(gif_je)
 To better understand the distribution of the NA values, we plot the following:
 
 ```{r, results='hide'}
-#| fig.width: 10
-# this chunk is to plot NA values —————
-
-
 je_NA7 <- combine_distributionNA("JURONG EAST", 7)
 je_NA8 <- combine_distributionNA("JURONG EAST", 8)
 
@@ -352,6 +348,8 @@ rds_je_combined <- bind_rows(lapply(rds_img, readRDS))
 ```
 
 ```{r}
+#| fig.width: 10
+
 gif_je_NA <- py$create_na_animation(je_NA, subzone = "JURONG EAST", value_df = rds_je_combined, fps = 2)
 include_graphics(gif_je_NA)
 ```
@@ -410,10 +408,6 @@ include_graphics(gif_jw)
 To better understand the distribution of the NA values, we plot the following:
 
 ```{r, results='hide'}
-#| echo: FALSE
-#| fig.width: 10
-# this chunk is to plot NA values —————
-
 jw_NA7 <- combine_distributionNA("JURONG WEST", 7)
 jw_NA8 <- combine_distributionNA("JURONG WEST", 8)
 
@@ -434,6 +428,8 @@ rds_jw_combined <- bind_rows(lapply(rds_img, readRDS))
 ```
 
 ```{r}
-gif_jw_NA <- py$create_na_animation(je_NA, subzone = "JURONG WEST", value_df = rds_jw_combined, fps = 2)
+#| fig.width: 10
+
+gif_jw_NA <- py$create_na_animation(jw_NA, subzone = "JURONG WEST", value_df = rds_jw_combined, fps = 2)
 include_graphics(gif_jw_NA)
 ```

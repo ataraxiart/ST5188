@@ -57,6 +57,14 @@ def create_na_animation(df, subzone, value_df, fps=5):
               north_count = na_counts_pivot.get("North", pd.Series([0])).values[0]
               south_count = na_counts_pivot.get("South", pd.Series([0])).values[0]
               central_count = na_counts_pivot.get("Central", pd.Series([0])).values[0]
+              
+            else:
+              max_region = None
+              east_count = 0
+              west_count = 0
+              north_count = 0
+              south_count = 0
+              central_count = 0
 
             plt.figure(figsize=(8, 6))
             
