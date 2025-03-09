@@ -1,6 +1,6 @@
 # script to extract LST data from images & impute NA values
 
-extract_impute <- function(img, subzone, landsat_no) {
+extract_impute <- function(img, subzone) {
   
   date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"), format="%Y-%m-%d")
   
