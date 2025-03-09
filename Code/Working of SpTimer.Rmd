@@ -1,0 +1,120 @@
+---
+title: "ST5188-working of spTimer"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+# clear working directory
+rm(list = ls())
+
+scripts = list.files("../Code/Preprocessing", full.names = TRUE)
+
+library(spTimer)
+
+#memory.limit(size = 8000)  # Increase memory limit (in MB) In windows
+
+
+# Load the package
+library(ff)
+
+```
+
+Loading the data set: Changi region
+
+```{r}
+data<-as.data.frame(read.csv("/Users/varshap/Downloads/ST5188/Data/Final/final_CHANGI_long.csv"))[1:50000,]
+data <- na.omit(data)  
+head(data)
+
+
+#Longitude:x
+#Latitude:y
+#time: period
+
+```
+
+```{r}
+# Convert 'period' to a factor variable
+data$period <- as.factor(data$period)
+
+# Check the structure again to confirm 'period' is now a factor
+str(data)
+# 
+ model_formula <- avg_LST ~ x + y   # Example formula, adjust as needed
+# 
+# 
+# # Fit the model using sptimer
+# model <- spTimer::fit(model_formula, data = data)
+# 
+# # Check summary of the model
+# summary(model)
+# 
+# # Specify the formula for the model
+# formula <- avg_LST ~ 1 + period  # or any other fixed effects you want to include
+# 
+# # Fit the hierarchical Bayesian model
+# model <- spTimer(formula = formula,
+#                  spatial = c("x", "y"),  # spatial coordinates
+#                  time = "period",          # time variable
+#                  data = data)
+# 
+# # Check model summary
+# summary(model)
+```
+
+```{r}
+# model <- spT.Gibbs(
+#   formula = avg_LST ~ x + y,
+#   data = data,
+#   coords = ~cbind(data$x + data$y),  # Ensure these match your dataset
+#   model = "GP",  # Gaussian Process
+#   priors = list(beta = "normal", sigma2 = "invgamma"),
+#   nItr = 100
+# )
+```
+
+```{r}
+#trying for a small dataset
+data <- subset(data, period %in% c("Jan-Feb 2001", "Mar-Apr 2000"))
+
+# Check for missing values in coordinates
+sum(is.na(data$x))
+sum(is.na(data$y))
+
+# Filter out rows with missing coordinates
+data <- data[!is.na(data$x) & !is.na(data$y), ]
+
+# Convert 'period' to a factor variable
+data$period <- as.factor(data$period)
+
+# Check the structure again to confirm 'period' is now a factor
+str(data)
+
+# Specify the formula for the model
+formula <- avg_LST ~ 1 + period
+
+coords <- as.matrix(data[, c("x", "y")])  # Create matrix of coordinates
+
+# Define priors for the GP model
+priors <- spTimer::spT.priors(
+  model = "GP",
+  inv.var.prior = spTimer::Gamm(2, 2),
+  beta.prior = spTimer::Norm(0, 10^2)
+)
+
+# Fit the hierarchical Bayesian model using spTimer
+model <- spTimer::spT.Gibbs(
+  formula = formula,
+  data = data,
+  coords=coords,  # Ensure these match your dataset
+  model = "GP",  # Gaussian Process model
+  priors = priors,  # Set priors
+  nItr = 2,
+  nBurn=1  # Number of iterations for Gibbs sampling
+)
+
+
+# Check model summary
+summary(model)
+```
