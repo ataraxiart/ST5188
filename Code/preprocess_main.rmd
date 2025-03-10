@@ -104,12 +104,62 @@ gif_changi <- py$create_lst_animation(final_changi_long, subzone = "CHANGI", fps
 include_graphics(gif_changi)
 ```
 
+To check how many NA values are present in each image, we can compute some summary statistics:
+
+```{r}
+#| include: FALSE
+# this chunk is to write the functions for eda of missing values —————
+landsat7_dir <- "../Data/Landsat/GEE_landsat7"
+landsat8_dir <- "../Data/Landsat/GEE_landsat8"
+
+landsat7_images <- list.files(path = landsat7_dir, pattern = "\\.tif$", full.names = TRUE)
+landsat8_images <- list.files(path = landsat8_dir, pattern = "\\.tif$", full.names = TRUE)
+
+all_results <- data.frame()
+
+# processing landsat 7 images
+for (img in landsat7_images) {
+  result <- countNA(img, subzones, landsat_no = 7)
+  result$landsat_number <- "7"
+  all_results <- rbind(all_results, result)
+}
+
+# processing landsat 8 images
+for (img in landsat8_images) {
+  result <- countNA(img, subzones, landsat_no = 8)
+  result$landsat_number <- "8"
+  all_results <- rbind(all_results, result)
+}
+
+# format dates for better visualisation
+all_results$formatted_date <- format(all_results$date, "%b %d, %Y")
+
+# compute probability distribution
+na_prob_distribution <- na_probdist(all_results)
+```
+
+```{r}
+write.csv(all_results |>
+            filter(subzone == "CHANGI"), 
+          "../Data/Misc/CHANGI_NA_Results.csv", row.names = FALSE)
+
+# summary statistics for missing values for Changi
+changi_summary <- create_subzone_summary(all_results, "CHANGI")
+cat("\nSummary Statistics for CHANGI:\n")
+print(changi_summary)
+
+# probability distribution
+changi_prob_plot <- plot_na_probdist(na_prob_distribution, "CHANGI")
+print(changi_prob_plot)
+```
+
 To better understand the distribution of the NA values, we plot the following:
 
 ```{r}
 #| include: FALSE
 # this chunk is to write the functions for eda of missing values —————
 
+# function to create RDS images to create gif for NA values
 distributionNA <- function(img, subzone) {
   date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"), format="%Y-%m-%d")
   
@@ -181,7 +231,8 @@ combine_distributionNA <- function(subzone, landsat_no) {
   return(rds_df_combined)
 }
 
-count_NA <- function(img, subzone) {
+# function to count NA values by region
+count_NA_region <- function(img, subzone) {
   
   date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"), format="%Y-%m-%d")
   
@@ -261,7 +312,7 @@ if(length(existing_rds) > 0) {
   file.remove(existing_rds) 
   }
 
-lapply(ls_img, function(img) count_NA(img, "CHANGI"))
+lapply(ls_img, function(img) count_NA_region(img, "CHANGI"))
 
 rds_img <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
 rds_changi_combined <- bind_rows(lapply(rds_img, readRDS))
@@ -323,6 +374,23 @@ eda(final_je_long)
 
 gif_je <- py$create_lst_animation(final_je_long, subzone = "JURONG EAST", fps = 2)
 include_graphics(gif_je)
+```
+
+To check how many NA values are present in each image, we can compute some summary statistics:
+
+```{r}
+write.csv(all_results |>
+            filter(subzone == "JURONG EAST"), 
+          "../Data/Misc/JURONG EAST_NA_Results.csv", row.names = FALSE)
+
+# summary statistics for missing values for Jurong East
+je_summary <- create_subzone_summary(all_results, "JURONG EAST")
+cat("\nSummary Statistics for JURONG EAST:\n")
+print(je_summary)
+
+# probability distribution
+je_prob_plot <- plot_na_probdist(na_prob_distribution, "JURONG EAST")
+print(je_prob_plot)
 ```
 
 To better understand the distribution of the NA values, we plot the following:
@@ -403,6 +471,23 @@ eda(final_jw_long)
 
 gif_jw <- py$create_lst_animation(final_jw_long, subzone = "JURONG WEST", fps = 2)
 include_graphics(gif_jw)
+```
+
+To check how many NA values are present in each image, we can compute some summary statistics:
+
+```{r}
+write.csv(all_results |>
+            filter(subzone == "JURONG WEST"), 
+          "../Data/Misc/JURONG EAST_NA_Results.csv", row.names = FALSE)
+
+# summary statistics for missing values for Jurong West
+jw_summary <- create_subzone_summary(all_results, "JURONG WEST")
+cat("\nSummary Statistics for JURONG WEST:\n")
+print(jw_summary)
+
+# probability distribution
+jw_prob_plot <- plot_na_probdist(na_prob_distribution, "JURONG WEST")
+print(jw_prob_plot)
 ```
 
 To better understand the distribution of the NA values, we plot the following:
