@@ -10,7 +10,7 @@ output: html_document
 
 # clear working directory
 rm(list = ls())
-reticulate::use_python("/opt/anaconda3/bin/python3", required = TRUE) # run `which python3` in terminal to get your python path
+reticulate::use_python("C:/Users/naomi/anaconda3/python.exe", required = TRUE) # run `which python3` in terminal to get your python path
 
 scripts = list.files("../Code/Preprocessing", full.names = TRUE)
 
@@ -106,9 +106,12 @@ include_graphics(gif_changi)
 
 To check how many NA values are present in each image, we can compute some summary statistics:
 
-```{r}
+```{r, results = 'hide'}
 #| include: FALSE
+#| echo: TRUE
 # this chunk is to write the functions for eda of missing values —————
+subzones <- c("CHANGI", "JURONG EAST", "JURONG WEST")
+
 landsat7_dir <- "../Data/Landsat/GEE_landsat7"
 landsat8_dir <- "../Data/Landsat/GEE_landsat8"
 
