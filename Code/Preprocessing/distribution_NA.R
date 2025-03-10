@@ -1,4 +1,4 @@
-countNA <- function(img, subzones, landsat_no) {
+distributionNA <- function(img, subzones, landsat_no) {
   results <- data.frame()
   
   for (subzone in subzones) {
