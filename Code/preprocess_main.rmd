@@ -158,7 +158,7 @@ print(changi_prob_plot)
 
 To better understand the distribution of the NA values, we plot the following:
 
-```{r, results='hide'}
+```{r}
 #| include: FALSE
 # this chunk is to write the functions for eda of missing values —————
 
@@ -185,7 +185,7 @@ distributionNA <- function(img, subzone) {
   
   # save the min. temp of region
   min_temp <- global(terra::mask(r_aligned, vect(boundary)), fun = "min", na.rm = TRUE)[1,1] 
-  min_temp <- ifelse(min_temp <= 18 | is.na(min_temp), 19, min_temp)
+  min_temp <- ifelse(min_temp <= 18 | is.na(min_temp), 19, min_temp) # to account for cases where temperatures are negative or extremely low
   
   # set NA values in image to be 0
   r_aligned[is.na(r_aligned)] <- 0
@@ -236,7 +236,6 @@ combine_distributionNA <- function(subzone, landsat_no) {
 
 # function to count NA values by region
 count_NA_region <- function(img, subzone) {
-  
   date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"), format="%Y-%m-%d")
   
   boundary <- st_read("../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = TRUE) |>
@@ -273,21 +272,19 @@ count_NA_region <- function(img, subzone) {
     mutate(LST = ifelse(LST == 0, NA, LST),
            date = date)
   
-  na_regions <- df_boundary |>
-    filter(is.na(LST)) 
+  # Skip processing if there are no missing values
+  if (sum(is.na(df_boundary$LST)) == 0) {
+    cat(sprintf("No missing values found in %s for %s. Skipping...\n", basename(img), subzone))
+    return(NULL)  # Skip this image if no NA values
+  }
   
-  if (nrow(na_regions) == 0) {
-    
-    return()  
-
-  } else {
-    
-    na_regions <- na_regions |>
+  na_regions <- df_boundary |>
+    filter(is.na(LST)) |>
     mutate(region = case_when(
-      x < x_mid & abs(y - y_mid) <= (max(y) - min(y)) * 0.25 ~ "West",
-      x > x_mid & abs(y - y_mid) <= (max(y) - min(y)) * 0.25 ~ "East",
-      y > y_mid & abs(x - x_mid) <= (max(x) - min(x)) * 0.25 ~ "North",
-      y < y_mid & abs(x - x_mid) <= (max(x) - min(x)) * 0.25 ~ "South",
+      x < x_mid & abs(y - y_mid) <= (max(df_boundary$y, na.rm = TRUE) - min(df_boundary$y, na.rm = TRUE)) * 0.25 ~ "West",
+      x > x_mid & abs(y - y_mid) <= (max(df_boundary$y, na.rm = TRUE) - min(df_boundary$y, na.rm = TRUE)) * 0.25 ~ "East",
+      y > y_mid & abs(x - x_mid) <= (max(df_boundary$x, na.rm = TRUE) - min(df_boundary$x, na.rm = TRUE)) * 0.25 ~ "North",
+      y < y_mid & abs(x - x_mid) <= (max(df_boundary$x, na.rm = TRUE) - min(df_boundary$x, na.rm = TRUE)) * 0.25 ~ "South",
       TRUE ~ "Central"
     ))
   
@@ -296,13 +293,18 @@ count_NA_region <- function(img, subzone) {
     summarise(na_count = n()) |>
     arrange(desc(na_count))
   
-  max_region <- na_counts$region[which.max(na_counts$na_count)]
+  # Handle case where na_counts is empty
+  if (nrow(na_counts) == 0) {
+    max_region <- "None"  # No missing data
+    na_counts <- data.frame(region = "None", na_count = 0)
+  } else {
+    max_region <- na_counts$region[which.max(na_counts$na_count)]
+  }
   
-  results <- data.frame(subzone, date, image_name = basename(img), max_region) |> cbind(na_counts)
+  results <- data.frame(subzone, date, image_name = basename(img), max_region, na_counts)
   saveRDS(results, file = paste0("../Data/Misc/SavedRDS/", gsub("\\.tif$", "", basename(img)), ".RDS"))
   
   cat(sprintf("The maximum number of NA values is in the %s region.\n", max_region))
-  }
 }
 
 ls_img <- c(list.files(paste0("../Data/Landsat/GEE_landsat", 7), pattern = "\\.tif$", full.names = TRUE), 
