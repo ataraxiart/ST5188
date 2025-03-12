@@ -425,7 +425,7 @@ if(length(existing_rds) > 0) {
   file.remove(existing_rds) 
   }
 
-lapply(ls_img, function(img) count_NA(img, "JURONG EAST"))
+lapply(ls_img, function(img) count_NA_region(img, "JURONG EAST"))
 
 rds_img <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
 rds_je_combined <- bind_rows(lapply(rds_img, readRDS))
@@ -522,7 +522,7 @@ if(length(existing_rds) > 0) {
   file.remove(existing_rds) 
   }
 
-lapply(ls_img, function(img) count_NA(img, "JURONG WEST"))
+lapply(ls_img, function(img) count_NA_region(img, "JURONG WEST"))
 
 rds_img <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
 rds_jw_combined <- bind_rows(lapply(rds_img, readRDS))
