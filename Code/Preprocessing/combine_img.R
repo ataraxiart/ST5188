@@ -16,7 +16,7 @@ combine_img <- function(subzone, landsat_no) {
   ls_img <- list.files(paste0("../Data/Landsat/GEE_landsat", landsat_no), pattern = "\\.tif$", full.names = TRUE)
   
   # apply extract_impute function on all images
-  lapply(ls_img, function(img) extract_impute(img, subzone, landsat_no))
+  lapply(ls_img, function(img) extract_impute(img, subzone))
   
   # retrieve all imputed data files
   rds_img <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)

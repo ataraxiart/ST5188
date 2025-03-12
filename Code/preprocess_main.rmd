@@ -1,7 +1,9 @@
 ---
 title: "ST5188 PG01 Exploratory Data Analysis"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r}
@@ -10,7 +12,7 @@ output: html_document
 
 # clear working directory
 rm(list = ls())
-reticulate::use_python("/opt/anaconda3/bin/python3", required = TRUE) # run `which python3` in terminal to get your python path
+reticulate::use_python("C:/Users/naomi/anaconda3/python.exe", required = TRUE) # run `which python3` in terminal to get your python path
 
 scripts = list.files("../Code/Preprocessing", full.names = TRUE)
 
@@ -104,12 +106,65 @@ gif_changi <- py$create_lst_animation(final_changi_long, subzone = "CHANGI", fps
 include_graphics(gif_changi)
 ```
 
+To check how many NA values are present in each image, we can compute some summary statistics:
+
+```{r, results = 'hide'}
+#| include: FALSE
+#| echo: TRUE
+# this chunk is to write the functions for eda of missing values —————
+subzones <- c("CHANGI", "JURONG EAST", "JURONG WEST")
+
+landsat7_dir <- "../Data/Landsat/GEE_landsat7"
+landsat8_dir <- "../Data/Landsat/GEE_landsat8"
+
+landsat7_images <- list.files(path = landsat7_dir, pattern = "\\.tif$", full.names = TRUE)
+landsat8_images <- list.files(path = landsat8_dir, pattern = "\\.tif$", full.names = TRUE)
+
+all_results <- data.frame()
+
+# processing landsat 7 images
+for (img in landsat7_images) {
+  result <- countNA(img, subzones, landsat_no = 7)
+  result$landsat_number <- "7"
+  all_results <- rbind(all_results, result)
+}
+
+# processing landsat 8 images
+for (img in landsat8_images) {
+  result <- countNA(img, subzones, landsat_no = 8)
+  result$landsat_number <- "8"
+  all_results <- rbind(all_results, result)
+}
+
+# format dates for better visualisation
+all_results$formatted_date <- format(all_results$date, "%b %d, %Y")
+
+# compute probability distribution
+na_prob_distribution <- na_probdist(all_results)
+```
+
+```{r}
+write.csv(all_results |>
+            filter(subzone == "CHANGI"), 
+          "../Data/Misc/CHANGI_NA_Results.csv", row.names = FALSE)
+
+# summary statistics for missing values for Changi
+changi_summary <- create_subzone_summary(all_results, "CHANGI")
+cat("\nSummary Statistics for CHANGI:\n")
+print(changi_summary)
+
+# probability distribution
+changi_prob_plot <- plot_na_probdist(na_prob_distribution, "CHANGI")
+print(changi_prob_plot)
+```
+
 To better understand the distribution of the NA values, we plot the following:
 
-```{r, results='hide'}
-#| fig.width: 10
-# this chunk is to plot NA values —————
+```{r}
+#| include: FALSE
+# this chunk is to write the functions for eda of missing values —————
 
+# function to create RDS images to create gif for NA values
 distributionNA <- function(img, subzone) {
   date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"), format="%Y-%m-%d")
   
@@ -181,6 +236,85 @@ combine_distributionNA <- function(subzone, landsat_no) {
   return(rds_df_combined)
 }
 
+# function to count NA values by region
+count_NA_region <- function(img, subzone) {
+  date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"), format="%Y-%m-%d")
+  
+  boundary <- st_read("../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = TRUE) |>
+    select(PLN_AREA_N, geometry) |>
+    filter(PLN_AREA_N == subzone) |>
+    st_union() |>
+    st_transform("EPSG:4326") |>
+    st_sf()
+  
+  centroid <- st_centroid(boundary)
+  x_mid <- st_coordinates(centroid)[1, 1]
+  y_mid <- st_coordinates(centroid)[1, 2]
+  
+  r <- rast(img) |>
+    project("EPSG:4326")
+  
+  template <- rast("../Data/Landsat/GEE_landsat8/LST_Singapore_2013-04-24.tif") |>
+    project("EPSG:4326")
+  r_aligned <- resample(r, template)
+  
+  min_temp <- global(terra::mask(r_aligned, vect(boundary)), fun = "min", na.rm = TRUE)[1, 1]
+  min_temp <- ifelse(min_temp <= 18 | is.na(min_temp), 19, min_temp)
+  r_aligned[is.na(r_aligned)] <- 0
+  
+  temp_boundary <- terra::mask(r_aligned, vect(boundary))
+  temp_boundary <- terra::crop(temp_boundary, ext(boundary))
+  
+  aggregated_temp_boundary <- temp_boundary |>
+    aggregate(fact = 10/3, fun = "mean", na.rm = TRUE)
+  
+  aggregated_temp_boundary <- ifel(aggregated_temp_boundary$LST < min_temp, 0, aggregated_temp_boundary$LST)
+  
+  df_boundary <- terra::as.data.frame(aggregated_temp_boundary, xy = TRUE, na.rm = TRUE) |>
+    mutate(LST = ifelse(LST == 0, NA, LST),
+           date = date)
+  
+  # Skip processing if there are no missing values
+  if (sum(is.na(df_boundary$LST)) == 0) {
+    cat(sprintf("No missing values found in %s for %s. Skipping...\n", basename(img), subzone))
+    return(NULL)  # Skip this image if no NA values
+  }
+  
+  na_regions <- df_boundary |>
+    filter(is.na(LST)) |>
+    mutate(region = case_when(
+      x < x_mid & abs(y - y_mid) <= (max(df_boundary$y, na.rm = TRUE) - min(df_boundary$y, na.rm = TRUE)) * 0.25 ~ "West",
+      x > x_mid & abs(y - y_mid) <= (max(df_boundary$y, na.rm = TRUE) - min(df_boundary$y, na.rm = TRUE)) * 0.25 ~ "East",
+      y > y_mid & abs(x - x_mid) <= (max(df_boundary$x, na.rm = TRUE) - min(df_boundary$x, na.rm = TRUE)) * 0.25 ~ "North",
+      y < y_mid & abs(x - x_mid) <= (max(df_boundary$x, na.rm = TRUE) - min(df_boundary$x, na.rm = TRUE)) * 0.25 ~ "South",
+      TRUE ~ "Central"
+    ))
+  
+  na_counts <- na_regions |>
+    group_by(region) |>
+    summarise(na_count = n()) |>
+    arrange(desc(na_count))
+  
+  # Handle case where na_counts is empty
+  if (nrow(na_counts) == 0) {
+    max_region <- "None"  # No missing data
+    na_counts <- data.frame(region = "None", na_count = 0)
+  } else {
+    max_region <- na_counts$region[which.max(na_counts$na_count)]
+  }
+  
+  results <- data.frame(subzone, date, image_name = basename(img), max_region, na_counts)
+  saveRDS(results, file = paste0("../Data/Misc/SavedRDS/", gsub("\\.tif$", "", basename(img)), ".RDS"))
+  
+  cat(sprintf("The maximum number of NA values is in the %s region.\n", max_region))
+}
+
+ls_img <- c(list.files(paste0("../Data/Landsat/GEE_landsat", 7), pattern = "\\.tif$", full.names = TRUE), 
+            list.files(paste0("../Data/Landsat/GEE_landsat", 8), pattern = "\\.tif$", full.names = TRUE))
+```
+
+```{r, results='hide'}
+
 changi_NA7 <- combine_distributionNA("CHANGI", 7)
 changi_NA8 <- combine_distributionNA("CHANGI", 8)
 
@@ -194,13 +328,14 @@ if(length(existing_rds) > 0) {
   file.remove(existing_rds) 
   }
 
-ls_img <- c(list.files(paste0("../Data/Landsat/GEE_landsat", 7), pattern = "\\.tif$", full.names = TRUE), 
-            list.files(paste0("../Data/Landsat/GEE_landsat", 8), pattern = "\\.tif$", full.names = TRUE))
-
-lapply(ls_img, function(img) count_NA(img, "CHANGI"))
+lapply(ls_img, function(img) count_NA_region(img, "CHANGI"))
 
 rds_img <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
 rds_changi_combined <- bind_rows(lapply(rds_img, readRDS))
+```
+
+```{r}
+#| fig.width: 10
   
 gif_changi_NA <- py$create_na_animation(changi_NA, subzone = "CHANGI", value_df = rds_changi_combined, fps = 2)
 include_graphics(gif_changi_NA)
@@ -257,13 +392,26 @@ gif_je <- py$create_lst_animation(final_je_long, subzone = "JURONG EAST", fps = 
 include_graphics(gif_je)
 ```
 
+To check how many NA values are present in each image, we can compute some summary statistics:
+
+```{r}
+write.csv(all_results |>
+            filter(subzone == "JURONG EAST"), 
+          "../Data/Misc/JURONG EAST_NA_Results.csv", row.names = FALSE)
+
+# summary statistics for missing values for Jurong East
+je_summary <- create_subzone_summary(all_results, "JURONG EAST")
+cat("\nSummary Statistics for JURONG EAST:\n")
+print(je_summary)
+
+# probability distribution
+je_prob_plot <- plot_na_probdist(na_prob_distribution, "JURONG EAST")
+print(je_prob_plot)
+```
+
 To better understand the distribution of the NA values, we plot the following:
 
 ```{r, results='hide'}
-#| fig.width: 10
-# this chunk is to plot NA values —————
-
-
 je_NA7 <- combine_distributionNA("JURONG EAST", 7)
 je_NA8 <- combine_distributionNA("JURONG EAST", 8)
 
@@ -277,11 +425,15 @@ if(length(existing_rds) > 0) {
   file.remove(existing_rds) 
   }
 
-lapply(ls_img, function(img) count_NA(img, "JURONG EAST"))
+lapply(ls_img, function(img) count_NA_region(img, "JURONG EAST"))
 
 rds_img <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
 rds_je_combined <- bind_rows(lapply(rds_img, readRDS))
-  
+```
+
+```{r}
+#| fig.width: 10
+
 gif_je_NA <- py$create_na_animation(je_NA, subzone = "JURONG EAST", value_df = rds_je_combined, fps = 2)
 include_graphics(gif_je_NA)
 ```
@@ -337,13 +489,26 @@ gif_jw <- py$create_lst_animation(final_jw_long, subzone = "JURONG WEST", fps = 
 include_graphics(gif_jw)
 ```
 
+To check how many NA values are present in each image, we can compute some summary statistics:
+
+```{r}
+write.csv(all_results |>
+            filter(subzone == "JURONG WEST"), 
+          "../Data/Misc/JURONG EAST_NA_Results.csv", row.names = FALSE)
+
+# summary statistics for missing values for Jurong West
+jw_summary <- create_subzone_summary(all_results, "JURONG WEST")
+cat("\nSummary Statistics for JURONG WEST:\n")
+print(jw_summary)
+
+# probability distribution
+jw_prob_plot <- plot_na_probdist(na_prob_distribution, "JURONG WEST")
+print(jw_prob_plot)
+```
+
 To better understand the distribution of the NA values, we plot the following:
 
 ```{r, results='hide'}
-#| echo: FALSE
-#| fig.width: 10
-# this chunk is to plot NA values —————
-
 jw_NA7 <- combine_distributionNA("JURONG WEST", 7)
 jw_NA8 <- combine_distributionNA("JURONG WEST", 8)
 
@@ -357,11 +522,15 @@ if(length(existing_rds) > 0) {
   file.remove(existing_rds) 
   }
 
-lapply(ls_img, function(img) count_NA(img, "JURONG WEST"))
+lapply(ls_img, function(img) count_NA_region(img, "JURONG WEST"))
 
 rds_img <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
 rds_jw_combined <- bind_rows(lapply(rds_img, readRDS))
-  
-gif_jw_NA <- py$create_na_animation(je_NA, subzone = "JURONG WEST", value_df = rds_jw_combined, fps = 2)
+```
+
+```{r}
+#| fig.width: 10
+
+gif_jw_NA <- py$create_na_animation(jw_NA, subzone = "JURONG WEST", value_df = rds_jw_combined, fps = 2)
 include_graphics(gif_jw_NA)
 ```
