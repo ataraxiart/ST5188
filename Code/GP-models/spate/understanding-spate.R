@@ -4,37 +4,24 @@ library(dplyr)
 library(spate)
 
 # importing the data
-df <- read.csv("/Users/amiraazad/Documents/GitHub/ST5188/Data/Final/final_CHANGI_long.csv")
-head(df)
+df <- read.csv("/Users/amiraazad/Documents/GitHub/ST5188/Data/Final/TT Split/changi_train_long.csv")
+# extract unique coordinates in the same order as they appear in the matrix
+coord_matrix <- as.matrix(df %>% select(x, y) %>% distinct())
 
+# prep into matrix format
 df <- df |>
-  group_by(period) |>
-  mutate(time_index = as.integer(factor(period, levels = unique(period))))
+  mutate(Coordinates = paste0("(", x, ", ", y, ")")) |>
+  select(-c(1,2))
 
-y <- df$avg_LST; x <- model.matrix(~1, data = df)
-num_space <- length(unique(df$x)) # number of spatial points
-num_time <- length(unique(df$time_index)) # number of time steps
+df_wide <- df |>
+  tidyr::pivot_wider(names_from = Coordinates, values_from = Value)
 
-# chose the MCMC method
-mcmc_settings <- list(nIter = 5000,  # number of MCMC iterations
-                      burnIn = 1000, # burn-in period
-                      adapt = TRUE)  # adaptive MCMC
+spate_matrix <- as.matrix(df_wide[, -1])  # remove Date column
+rownames(spate_matrix) <- df_wide$Date    # set time steps as row names
+
+# HBM with Bayesian Inference with MCMC
+spateMCMC <- spate.mcmc(y = spate_matrix, coord = coord_matrix, n = 5290, Nmc = 100, BurnIn = 20, seed = 5188, trace = TRUE)
+
+# GLMM with MLE
 
 
-set.seed(5188)
-# run the spatio-temporal model - estimates the parameters using the MCMC method
-mcmc_results <- spate.mcmc(y = y, X = X, N = N, T = time,
-                           nIter = 5000, burnIn = 1000, adapt = TRUE)
-
-summary(mcmc_results)
-plot(mcmc_results)
-par(mfrow = c(3, 3))  # Arrange plots in a grid
-for (i in 1:9) {
-  plot(mcmc_results$theta[, i], type = "l", main = paste("Param", i))
-}
-
-post_means <- colMeans(mcmc_results$theta)
-print(post_means)
-
-image(mcmc_results$theta, main = "Spatial Posterior Distribution")
-plot(1:T, apply(mcmc_results$theta, 2, mean), type = "l", main = "Time Series of Parameters")
