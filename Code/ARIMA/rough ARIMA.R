@@ -8,8 +8,8 @@ library(ggplot2)
 library(cluster)
 library(lubridate)
 
-train_C <- read_csv("C:/Users/Swarnali/Documents/changi_train_long.csv")
-test_C <- read_csv("C:/Users/Swarnali/Documents/changi_test_long.csv")
+train_C <- read_csv("../../Data/Final/TT Split/changi_train_long.csv")
+test_C <- read_csv("../../Data/Final/TT Split/changi_test_long.csv")
 
 
 # Create a Unique Point Identifier
