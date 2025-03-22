@@ -8,7 +8,7 @@ output: html_document
 # clear working directory
 rm(list = ls())
 
-scripts = list.files("../Code/Preprocessing", full.names = TRUE)
+scripts = list.files("../Code/GP-models/spTimer", full.names = TRUE)
 
 library(spTimer)
 
@@ -17,16 +17,48 @@ library(spTimer)
 
 # Load the package
 library(ff)
-
+library(dplyr)
 ```
 
 Loading the data set: Changi region
 
 ```{r}
-data<-as.data.frame(read.csv("../Data/Final/final_CHANGI_long.csv"))
-data <- na.omit(data)  
+data<-as.data.frame(read.csv("/Users/varshap/Downloads/ST5188/Data/Final/TT Split/changi_train_long.csv"))
+#data <- na.omit(data)  
 head(data)
 
+data <- data %>%
+  mutate(Date = as.factor(Date)) %>% # Ensure Date is a factor first
+  mutate(time_index = as.integer(factor(Date, levels = unique(Date))))
+
+# Check the structure of the data
+str(data)
+
+# Check the range of time_index
+range(data$time_index)  # Should return the minimum and maximum time indices
+
+# Check the distribution of time_index
+table(data$time_index)  # Should show the count of observations for each time point
+
+
+
+# # Aggregate LST values for each (x, y) pair over time
+# aggregated_data <- data %>%
+#   group_by(x, y) %>%
+#   summarise(
+#     mean_LST = mean(Value, na.rm = TRUE),  # Mean LST
+#   )
+# 
+# # View the aggregated data
+# head(aggregated_data)
+# 
+
+# # Convert Date to a factor and create a time index
+# data <- data %>%
+#   mutate(
+#     Date = as.factor(Date),  # Convert Date to a factor
+#     time_index = as.integer(factor(Date, levels = unique(Date))))  # Create a numeric time index
+# 
 
 #Longitude:x
 #Latitude:y
@@ -36,99 +68,238 @@ head(data)
 
 ```{r}
 # Convert 'period' to a factor variable
-data$period <- as.factor(data$period)
+data$Date <- as.factor(data$Date)
 
 # Check the structure again to confirm 'period' is now a factor
 str(data)
-# 
- model_formula <- avg_LST ~ x + y   # Example formula, adjust as needed
 
 ```
 
+
+### using Wide format here??!
 ```{r}
-#trying for a small dataset
 
-# Check for missing values in coordinates
-sum(is.na(data$x))
-sum(is.na(data$y))
+# Load the dataset
+data <- read.csv("/Users/varshap/Downloads/ST5188/Data/Final/TT Split/changi_train_wide.csv")
 
-# Filter out rows with missing coordinates
-data <- data[!is.na(data$x) & !is.na(data$y), ]
+# Randomly select 1000 rows
+set.seed(123)  # Ensures reproducibility
+data <- data %>% sample_n(1000)
 
-# Subsampling:
-subsampled_data <- data[seq(1, nrow(data), by = 100), ]
+# Add small random noise to coordinates
+set.seed(123)
+data <- data %>%
+  mutate(
+    x = x + runif(n(), -0.1, 0.1),  # Add noise to x
+    y = y + runif(n(), -0.1, 0.1)   # Add noise to y
+  )
 
-#remove duplicates
-subsampled_data <- data[!duplicated(subsampled_data[, c("x", "y")]), ]
+#rescaling
+# data <- data %>%
+#   mutate(
+#     x = (x - min(x)) / (max(x) - min(x)),
+#     y = (y - min(y)) / (max(y) - min(y))
+#   )
 
-# Convert 'period' to a factor variable
-subsampled_data$period <- as.factor(subsampled_data$period)
+# Extract coordinates
+coords <- as.matrix(data[, c("x", "y")])
 
-# Check the structure again to confirm 'period' is now a factor
-str(subsampled_data)
-```
+# Define the formula for the first time point
+formula <- `Mar.Apr.2000` ~ x + y
 
-```{r}
-# Specify the formula for the model
-formula <- avg_LST ~ 1 + period
-
-coords <- as.matrix(data[, c("x", "y")])  # Create matrix of coordinates
-
-# Define priors for the GP model
+# Define priors
 priors <- spTimer::spT.priors(
   model = "GP",
-  inv.var.prior = spTimer::Gamm(2, 2),
-  beta.prior = spTimer::Norm(0, 10^2)
+  inv.var.prior = spTimer::Gamm(2, 0.1),
+  beta.prior = spTimer::Norm(0, 10^4)
 )
 
-```
+priors <- spTimer::spT.priors(
+  model = "GP",
+  inv.var.prior = spTimer::Gamm(2, 0.1),  # Adjust the shape and scale
+  beta.prior = spTimer::Norm(0, 10^4),     # Increase variance
+  phi.prior = spTimer::Gam(2, 0.5)
+)
+# Define spatial decay prior using spT.decay
+decay_prior <- spTimer::spT.decay(
+  distribution = spTimer::Gamm(a = 2, b = 1),  # Gamma prior for phi
+  tuning = 0.1,  # Tuning parameter 
+  npoints = NULL,  # Number of points for discretization
+  value = NULL     # Fixed value for phi 
+)
 
-```{r}
-#Attempt in fitting 1
-
-subsampled_coords <- as.matrix(subsampled_data[, c("x", "y")])
-
-dim(subsampled_data)  # Ensure data is not empty
-str(subsampled_data)  # Confirm variable types
-
-# Fit the hierarchical Bayesian model using spTimer
+# Fit the model
 model <- spTimer::spT.Gibbs(
   formula = formula,
-  data = subsampled_data,
-  coords=subsampled_coords,  # Ensure these match your dataset
-  model = "GP",  # Gaussian Process model
-  priors = priors,  # Set priors
-  nItr = 500,   # Lower iterations for quick test
-  nBurn = 200,  # Lower burn-in for quick test
-  # nThin = 10,   # Thinning to speed up convergence
-  cov.fnc="exponential"
+  data = data,
+  coords = coords,
+  model = "GP",
+  priors = priors,
+  nItr = 100,
+  nBurn = 10,
+  cov.fnc = "exponential",
+  tol.dist = 1e-3
 )
-
-
 
 # Check model summary
 summary(model)
 ```
 
 ```{r}
-#attempt inn fitting option 2
+# Load the dataset
+data <- read.csv("/Users/varshap/Downloads/ST5188/Data/Final/TT Split/changi_train_wide.csv")
 
-# Define priors for the GP model
+# Randomly select 1000 rows
+set.seed(123)  # Ensures reproducibility
+data_sample <- data %>% sample_n(1000)
+
+# Add small random noise to coordinates
+data_sample <- data_sample %>%
+  mutate(
+    x = x + runif(n(), -0.1, 0.1),  # Add noise to x
+    y = y + runif(n(), -0.1, 0.1)   # Add noise to y
+  )
+
+# Rescale coordinates
+# data_sample <- data_sample %>%
+#   mutate(
+#     x = (x - min(x)) / (max(x) - min(x)),
+#     y = (y - min(y)) / (max(y) - min(y))
+#   )
+
+# Extract the month columns 
+month_cols <- names(data_sample)[grepl("\\d{4}", names(data_sample))]  # Select columns containing years
+
+# Extract coordinates
+coords <- as.matrix(data_sample[, c("x", "y")])
+
+# Define priors
 priors <- spTimer::spT.priors(
-    model = "GP",
-    inv.var.prior = matrix(c(2, 2), nrow = 1, ncol = 2, byrow = TRUE),  # Inverse Gamma prior
-    beta.prior = matrix(c(0, 100), nrow = 1, ncol = 2, byrow = TRUE)   # Normal prior
+  model = "GP",
+  inv.var.prior = spTimer::Gamm(2, 0.1),
+  beta.prior = spTimer::Norm(0, 10^2)
 )
 
-# Fit the hierarchical Bayesian model using spTimer
-model <- spTimer::spT.Gibbs(
-  formula = formula,
-  data = subsampled_data,
-  coords = as.matrix(data[, c("x", "y")]) ,  
-  model = "GP",  
-  priors = priors,  
-  nItr = 2000,  # Increase for better results
-  nBurn = 1000,
-  cov.fnc="gaussian"
+priors <- spTimer::spT.priors(
+  model = "GP",
+  inv.var.prior = spTimer::Gamm(2, 0.1),  # Adjust the shape and scale
+  beta.prior = spTimer::Norm(0, 10^2) #,     # Increase variance
+  #phi.prior = spTimer::Gamm(2, 0.5)       # controls spatial decay
 )
+
+# Define spatial decay prior using spT.decay
+decay_prior <- spTimer::spT.decay(
+  distribution = spTimer::Gamm(a = 2, b = 1),  # Gamma prior for phi
+  tuning = 0.1,  # Tuning parameter 
+  npoints = NULL,  # Number of points for discretization
+  value = NULL     # Fixed value for phi 
+)
+
+# Loop over all months and fit the model
+models <- list()
+for (month in month_cols) {
+  formula <- as.formula(paste0("`", month, "` ~ x + y"))  # Create formula dynamically
+  
+  # Fit the model
+  model <- spTimer::spT.Gibbs(
+    formula = formula,
+    data = data_sample,
+    coords = coords,
+    model = "GP",
+    priors = priors,
+    nItr = 100,
+    nBurn = 10,
+    cov.fnc = "exponential",
+    tol.dist = 1e-2
+  )
+  
+  # Store model in the list
+  models[[month]] <- model
+  
+  # Print progress
+  cat("Finished model for:", month, "\n")
+}
+
+# Print summaries of all models
+lapply(models, summary)
+
 ```
+
+# Load the dataset
+data <- read.csv("/Users/varshap/Downloads/ST5188/Data/Final/TT Split/changi_train_wide.csv")
+
+# Randomly select 1000 rows
+set.seed(123)  # Ensures reproducibility
+data_sample <- data %>% sample_n(1000)
+
+# Add small random noise to coordinates
+data_sample <- data_sample %>%
+  mutate(
+    x = x + runif(n(), -0.1, 0.1),  # Add noise to x
+    y = y + runif(n(), -0.1, 0.1)   # Add noise to y
+  )
+
+# Rescale coordinates
+# data_sample <- data_sample %>%
+#   mutate(
+#     x = (x - min(x)) / (max(x) - min(x)),
+#     y = (y - min(y)) / (max(y) - min(y))
+#   )
+
+# Extract the month columns (assuming they are named like 'Mar.Apr.2000', 'May.Jun.2000', etc.)
+month_cols <- names(data_sample)[grepl("\\d{4}", names(data_sample))]  # Select columns containing years
+
+# Extract coordinates
+coords <- as.matrix(data_sample[, c("x", "y")])
+
+# Define priors
+priors <- spTimer::spT.priors(
+  model = "GP",
+  inv.var.prior = spTimer::Gamm(2, 0.1),
+  beta.prior = spTimer::Norm(0, 10^2)
+)
+
+priors <- spTimer::spT.priors(
+  model = "GP",
+  inv.var.prior = spTimer::Gamm(2, 0.1),  # Adjust the shape and scale
+  beta.prior = spTimer::Norm(0, 10^2) #,     # Increase variance
+  #phi.prior = spTimer::Gamm(2, 0.5)       # controls spatial decay
+)
+
+# Define spatial decay prior using spT.decay
+decay_prior <- spTimer::spT.decay(
+  distribution = spTimer::Gamm(a = 2, b = 1),  # Gamma prior for phi
+  tuning = 0.1,  # Tuning parameter 
+  npoints = NULL,  # Number of points for discretization
+  value = NULL     # Fixed value for phi 
+)
+
+# Loop over all months and fit the model
+models <- list()
+for (month in month_cols) {
+  formula <- as.formula(paste0("`", month, "` ~ x + y"))  # Create formula dynamically
+  
+  # Fit the model
+  model <- spTimer::spT.Gibbs(
+    formula = formula,
+    data = data_sample,
+    coords = coords,
+    model = "GP",
+    priors = priors,
+    decay=decay_prior,
+    nItr = 100,
+    nBurn = 10,
+    cov.fnc = "exponential",
+    tol.dist = 1e-2
+  )
+  
+  # Store model in the list
+  models[[month]] <- model
+  
+  # Print progress
+  cat("Finished model for:", month, "\n")
+}
+
+# Print summaries of all models
+lapply(models, summary)
+
