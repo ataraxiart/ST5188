@@ -22,59 +22,6 @@ library(dplyr)
 
 Loading the data set: Changi region
 
-```{r}
-data<-as.data.frame(read.csv("/Users/varshap/Downloads/ST5188/Data/Final/TT Split/changi_train_long.csv"))
-#data <- na.omit(data)  
-head(data)
-
-data <- data %>%
-  mutate(Date = as.factor(Date)) %>% # Ensure Date is a factor first
-  mutate(time_index = as.integer(factor(Date, levels = unique(Date))))
-
-# Check the structure of the data
-str(data)
-
-# Check the range of time_index
-range(data$time_index)  # Should return the minimum and maximum time indices
-
-# Check the distribution of time_index
-table(data$time_index)  # Should show the count of observations for each time point
-
-
-
-# # Aggregate LST values for each (x, y) pair over time
-# aggregated_data <- data %>%
-#   group_by(x, y) %>%
-#   summarise(
-#     mean_LST = mean(Value, na.rm = TRUE),  # Mean LST
-#   )
-# 
-# # View the aggregated data
-# head(aggregated_data)
-# 
-
-# # Convert Date to a factor and create a time index
-# data <- data %>%
-#   mutate(
-#     Date = as.factor(Date),  # Convert Date to a factor
-#     time_index = as.integer(factor(Date, levels = unique(Date))))  # Create a numeric time index
-# 
-
-#Longitude:x
-#Latitude:y
-#time: period
-
-```
-
-```{r}
-# Convert 'period' to a factor variable
-data$Date <- as.factor(data$Date)
-
-# Check the structure again to confirm 'period' is now a factor
-str(data)
-
-```
-
 
 ### using Wide format here??!
 ```{r}
@@ -184,7 +131,7 @@ priors <- spTimer::spT.priors(
   model = "GP",
   inv.var.prior = spTimer::Gamm(2, 0.1),  # Adjust the shape and scale
   beta.prior = spTimer::Norm(0, 10^2) #,     # Increase variance
-  #phi.prior = spTimer::Gamm(2, 0.5)       # controls spatial decay
+  #phi.prior = spTimer::Gamm(2, 0.5)       # controls spatial decay--works in older version
 )
 
 # Define spatial decay prior using spT.decay
@@ -207,6 +154,7 @@ for (month in month_cols) {
     coords = coords,
     model = "GP",
     priors = priors,
+    #decay=decay_prior,  ##doesnt work
     nItr = 100,
     nBurn = 10,
     cov.fnc = "exponential",
@@ -224,82 +172,4 @@ for (month in month_cols) {
 lapply(models, summary)
 
 ```
-
-# Load the dataset
-data <- read.csv("/Users/varshap/Downloads/ST5188/Data/Final/TT Split/changi_train_wide.csv")
-
-# Randomly select 1000 rows
-set.seed(123)  # Ensures reproducibility
-data_sample <- data %>% sample_n(1000)
-
-# Add small random noise to coordinates
-data_sample <- data_sample %>%
-  mutate(
-    x = x + runif(n(), -0.1, 0.1),  # Add noise to x
-    y = y + runif(n(), -0.1, 0.1)   # Add noise to y
-  )
-
-# Rescale coordinates
-# data_sample <- data_sample %>%
-#   mutate(
-#     x = (x - min(x)) / (max(x) - min(x)),
-#     y = (y - min(y)) / (max(y) - min(y))
-#   )
-
-# Extract the month columns (assuming they are named like 'Mar.Apr.2000', 'May.Jun.2000', etc.)
-month_cols <- names(data_sample)[grepl("\\d{4}", names(data_sample))]  # Select columns containing years
-
-# Extract coordinates
-coords <- as.matrix(data_sample[, c("x", "y")])
-
-# Define priors
-priors <- spTimer::spT.priors(
-  model = "GP",
-  inv.var.prior = spTimer::Gamm(2, 0.1),
-  beta.prior = spTimer::Norm(0, 10^2)
-)
-
-priors <- spTimer::spT.priors(
-  model = "GP",
-  inv.var.prior = spTimer::Gamm(2, 0.1),  # Adjust the shape and scale
-  beta.prior = spTimer::Norm(0, 10^2) #,     # Increase variance
-  #phi.prior = spTimer::Gamm(2, 0.5)       # controls spatial decay
-)
-
-# Define spatial decay prior using spT.decay
-decay_prior <- spTimer::spT.decay(
-  distribution = spTimer::Gamm(a = 2, b = 1),  # Gamma prior for phi
-  tuning = 0.1,  # Tuning parameter 
-  npoints = NULL,  # Number of points for discretization
-  value = NULL     # Fixed value for phi 
-)
-
-# Loop over all months and fit the model
-models <- list()
-for (month in month_cols) {
-  formula <- as.formula(paste0("`", month, "` ~ x + y"))  # Create formula dynamically
-  
-  # Fit the model
-  model <- spTimer::spT.Gibbs(
-    formula = formula,
-    data = data_sample,
-    coords = coords,
-    model = "GP",
-    priors = priors,
-    decay=decay_prior,
-    nItr = 100,
-    nBurn = 10,
-    cov.fnc = "exponential",
-    tol.dist = 1e-2
-  )
-  
-  # Store model in the list
-  models[[month]] <- model
-  
-  # Print progress
-  cat("Finished model for:", month, "\n")
-}
-
-# Print summaries of all models
-lapply(models, summary)
 
