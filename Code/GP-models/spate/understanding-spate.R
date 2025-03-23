@@ -149,7 +149,7 @@ Pmean <- Pmean[, Sind] # cut out the other cells of the grid that spate.predict 
 Pmean_unscaled <- (Pmean * sd) + m
 
 # visualising results
-plot_heatmap <- function(Pmean_row, Sind, row_index, dates) {
+plot_heatmap <- function(Pmean_row, Sind, row_index, dates, type) {
   
   df_matrix <- melt(Pmean_row) |>
     mutate(grid_index = Sind) |>
@@ -170,7 +170,7 @@ plot_heatmap <- function(Pmean_row, Sind, row_index, dates) {
       axis.text = element_text(size = 5),
       plot.title = element_text(size = 5)
     ) +
-    labs(title = paste0("Predicted LST at t = ", dates[row_index]),
+    labs(title = paste0(type, dates[row_index]),
          x = "Column", y = "Row") +
     scale_y_reverse() 
          
@@ -186,7 +186,7 @@ test_wide <- test |>
 dates <- test_wide$Date
 
 time_steps <- 1:nrow(Pmean_unscaled)  
-heatmaps <- lapply(time_steps, function(i) plot_heatmap(Pmean_unscaled[i, ], Sind, i, dates))
+heatmaps <- lapply(time_steps, function(i) plot_heatmap(Pmean_unscaled[i, ], Sind, i, dates, type = "Predicted LST at t = "))
 grid.arrange(grobs = heatmaps, ncol = 6)
 
 # sd - weird
@@ -202,7 +202,12 @@ rmse_matrix <- function(y_true, y_pred) {
 }
 
 rmse_value <- rmse_matrix(test_wide, Pmean_unscaled)
-print(paste("Overall RMSE:", rmse_value)) # 4.05
+print(paste("Overall RMSE:", rmse_value)) # 4.16
+
+# plot the difference between predicted - actual
+Pmean_diff <- abs(test_wide - Pmean_unscaled)
+heatmaps_diff <- lapply(time_steps, function(i) plot_heatmap(Pmean_diff[i, ], Sind, i, dates, type = "Predicted - Actual LST at t = "))
+grid.arrange(grobs = heatmaps_diff, ncol = 6)
 
 ########################################################################################
 
