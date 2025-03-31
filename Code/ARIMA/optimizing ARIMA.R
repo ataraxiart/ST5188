@@ -1,4 +1,4 @@
-#Changi
+#Jurong West
 
 library(dplyr)
 library(readr)
@@ -9,22 +9,22 @@ library(ggplot2)
 library(cluster)
 library(lubridate)
 
-train_C <- read_csv("../../Data/Final/TT Split/changi_train_long.csv")
-test_C <- read_csv("../../Data/Final/TT Split/changi_test_long.csv")
+train_JW <- read_csv("../../Data/Final/JW Split/train_set.csv")
+test_JW <- read_csv("../../Data/Final/JW Split/test_set.csv")
 
 # Create a Unique Point Identifier
-train_Changi <- train_C %>%
+train_JurongWEST <- train_JW %>%
   mutate(point_id = paste(x, y, sep = "_"))
 
-test_Changi <- test_C %>%
+test_JurongWest <- test_JW %>%
   mutate(point_id = paste(x, y, sep = "_"))
 
 # Sample Discrete Points from the Training Data
-unique_points <- train_Changi %>%
+unique_points <- train_JurongWEST %>%
   select(point_id, x, y) %>%
   distinct()
 
-n_points <- 10
+n_points <- 30
 set.seed(5188) 
 clusters <- kmeans(unique_points[, c("x", "y")], centers = n_points)
 unique_points$cluster <- clusters$cluster
@@ -34,7 +34,7 @@ sampled_points <- unique_points %>%
   sample_n(1) %>%
   pull(point_id)
 
-cat("Sampled point_id values for Changi:", sampled_points, "\n")
+cat("Sampled point_id values for Jurong West:", sampled_points, "\n")
 
 # Function to convert date string to date object
 convert_period_to_date <- function(period_str) {
@@ -59,8 +59,8 @@ convert_period_to_date <- function(period_str) {
   as.Date(date_str)
 }
 
-train_Changi$Date <- as.Date(sapply(train_Changi$Date, convert_period_to_date))
-test_Changi$Date <- as.Date(sapply(test_Changi$Date, convert_period_to_date))
+train_JurongWEST$Date <- as.Date(sapply(train_JurongWEST$Date, convert_period_to_date))
+test_JurongWest$Date <- as.Date(sapply(test_JurongWest$Date, convert_period_to_date))
 
 # Grid search for ARIMA parameters and calculating RMSE
 arima_models <- list()
@@ -74,7 +74,7 @@ calculate_rmse <- function(actual, forecasted) {
 # Iterate over each point to optimize ARIMA parameters using grid search
 for (point in sampled_points) {
   
-  point_data <- train_Changi %>%
+  point_data <- train_JurongWEST %>%
     filter(point_id == point) %>%
     arrange(Date)
   
@@ -136,7 +136,7 @@ print(rmse_values)
 all_comparisons <- list()
 for (point in sampled_points) {
   
-  test_point_data <- test_Changi %>%
+  test_point_data <- test_JurongWest %>%
     filter(point_id == point) %>%
     arrange(Date)
   
@@ -169,16 +169,35 @@ for (point in sampled_points) {
 # Combine all comparison data into a single data frame
 comparison_data <- bind_rows(all_comparisons)
 
-# Plot Actual vs Forecasted values for all points using facet_wrap
-ggplot(comparison_data, aes(x = Date)) +
-  geom_line(aes(y = Actual, color = "Actual"), linewidth = 1) +
-  geom_line(aes(y = Forecast, color = "Forecast"), linewidth = 1) +
-  geom_ribbon(aes(ymin = Lower, ymax = Upper), fill = "lightgray", alpha = 0.5) +
-  facet_wrap(~Point, scales = "free_y") +  # Facet by point_id, each point gets its own plot
-  labs(title = "Actual vs Forecast for All Points",
-       x = "Date", y = "Value") +
-  scale_color_manual(values = c("Actual" = "blue", "Forecast" = "red")) +
-  theme_minimal() +
-  theme(legend.title = element_blank()) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  guides(color = guide_legend(override.aes = list(size = 2)))
+# Define a data frame to store RMSE for test data
+test_rmse_values <- data.frame(Point = character(), RMSE = numeric())
+
+# Loop for comparing forecast with test data
+for (point in sampled_points) {
+  
+  test_point_data <- test_JurongWest %>%
+    filter(point_id == point) %>%
+    arrange(Date)
+  
+  ts_test_data <- ts(test_point_data$Value,
+                     start = c(year(min(test_point_data$Date)), month(min(test_point_data$Date))),
+                     frequency = 6)
+  
+  model <- arima_models[[point]]
+  
+  forecast_horizon <- length(ts_test_data)
+  forecast_values <- forecast(model, h = forecast_horizon)
+  
+  # Calculate RMSE for test data
+  test_rmse <- calculate_rmse(test_point_data$Value, forecast_values$mean)
+  
+  # Store the RMSE value in the data frame
+  test_rmse_values <- rbind(test_rmse_values, data.frame(Point = point, RMSE = test_rmse))
+  
+  cat("\nTest RMSE for Point:", point, ":", test_rmse, "\n")
+}
+
+# Print Test RMSE values
+print(test_rmse_values)
+
+
