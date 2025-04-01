@@ -102,8 +102,8 @@ process_neighborhood <- function(neighborhood, train_file, test_file, n_points =
 # Changi
 forecast_results_changi <- process_neighborhood(
   neighborhood = "Changi",
-  train_file = "../../Data/Final/TT Split/changi_train_long.csv",
-  test_file = "../../Data/Final/TT Split/changi_test_long.csv"
+  train_file = "../../Data/Final/Imputation/imp_train_set.csv",
+  test_file = "../../Data/Final/Imputation/imp_test_set.csv"
 )
 
 # Jurong East
