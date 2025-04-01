@@ -1,4 +1,4 @@
-process_neighborhood <- function(neighborhood, train_file, test_file, n_points = 10, seed = 5188) {
+process_neighborhood <- function(neighborhood, train_file, test_file, n_points = 30, seed = 5188) {
   library(dplyr)
   library(readr)
   library(tidyr)
@@ -102,20 +102,7 @@ process_neighborhood <- function(neighborhood, train_file, test_file, n_points =
 # Changi
 forecast_results_changi <- process_neighborhood(
   neighborhood = "Changi",
-  train_file = "../../Data/Final/TT Split/changi_train_long.csv",
-  test_file = "../../Data/Final/TT Split/changi_test_long.csv"
+  train_file = "../../Data/Final/Imputation/imp_train_set.csv",
+  test_file = "../../Data/Final/Imputation/imp_test_set.csv"
 )
 
-# Jurong East
-forecast_results_jurong_east <- process_neighborhood(
-  neighborhood = "Jurong East",
-  train_file = "../../Data/Final/TT Split/je_train_long.csv",
-  test_file = "../../Data/Final/TT Split/je_test_long.csv"
-)
-
-# Jurong West
-forecast_results_jurong_west <- process_neighborhood(
-  neighborhood = "Jurong West",
-  train_file = "../../Data/Final/TT Split/jw_train_long.csv",
-  test_file = "../../Data/Final/TT Split/jw_test_long.csv"
-)

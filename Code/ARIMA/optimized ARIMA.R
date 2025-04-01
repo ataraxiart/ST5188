@@ -1,4 +1,4 @@
-#Jurong West
+#Changi
 
 library(dplyr)
 library(readr)
@@ -9,18 +9,18 @@ library(ggplot2)
 library(cluster)
 library(lubridate)
 
-train_JW <- read_csv("../../Data/Final/JW Split/train_set.csv")
-test_JW <- read_csv("../../Data/Final/JW Split/test_set.csv")
+train_C <- read_csv("../../Data/Final/Imputation/imp_train_set.csv")
+test_C <- read_csv("../../Data/Final/Imputation/imp_test_set.csv")
 
 # Create a Unique Point Identifier
-train_JurongWEST <- train_JW %>%
+train_Changi <- train_C %>%
   mutate(point_id = paste(x, y, sep = "_"))
 
-test_JurongWest <- test_JW %>%
+test_Changi <- test_C %>%
   mutate(point_id = paste(x, y, sep = "_"))
 
 # Sample Discrete Points from the Training Data
-unique_points <- train_JurongWEST %>%
+unique_points <- train_Changi %>%
   select(point_id, x, y) %>%
   distinct()
 
@@ -34,7 +34,7 @@ sampled_points <- unique_points %>%
   sample_n(1) %>%
   pull(point_id)
 
-cat("Sampled point_id values for Jurong West:", sampled_points, "\n")
+cat("Sampled point_id values for Changi:", sampled_points, "\n")
 
 # Function to convert date string to date object
 convert_period_to_date <- function(period_str) {
@@ -59,8 +59,8 @@ convert_period_to_date <- function(period_str) {
   as.Date(date_str)
 }
 
-train_JurongWEST$Date <- as.Date(sapply(train_JurongWEST$Date, convert_period_to_date))
-test_JurongWest$Date <- as.Date(sapply(test_JurongWest$Date, convert_period_to_date))
+train_Changi$Date <- as.Date(sapply(train_Changi$Date, convert_period_to_date))
+test_Changi$Date <- as.Date(sapply(test_Changi$Date, convert_period_to_date))
 
 # Grid search for ARIMA parameters and calculating RMSE
 arima_models <- list()
@@ -74,7 +74,7 @@ calculate_rmse <- function(actual, forecasted) {
 # Iterate over each point to optimize ARIMA parameters using grid search
 for (point in sampled_points) {
   
-  point_data <- train_JurongWEST %>%
+  point_data <- train_Changi %>%
     filter(point_id == point) %>%
     arrange(Date)
   
@@ -136,7 +136,7 @@ print(rmse_values)
 all_comparisons <- list()
 for (point in sampled_points) {
   
-  test_point_data <- test_JurongWest %>%
+  test_point_data <- test_Changi %>%
     filter(point_id == point) %>%
     arrange(Date)
   
@@ -175,7 +175,7 @@ test_rmse_values <- data.frame(Point = character(), RMSE = numeric())
 # Loop for comparing forecast with test data
 for (point in sampled_points) {
   
-  test_point_data <- test_JurongWest %>%
+  test_point_data <- test_Changi %>%
     filter(point_id == point) %>%
     arrange(Date)
   
