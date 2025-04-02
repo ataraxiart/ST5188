@@ -64,11 +64,17 @@ test_Changi$Date <- as.Date(sapply(test_Changi$Date, convert_period_to_date))
 
 # Grid search for ARIMA parameters and calculating RMSE
 arima_models <- list()
-rmse_values <- data.frame(Point = character(), RMSE = numeric())
+rmse_values <- data.frame(Point = character(), RMSE = numeric())  # Stores best RMSE for training
+
+# Horizon-specific RMSE matrix
+rmse_matrix <- matrix(NA, nrow = 6, ncol = length(sampled_points))  # Rows: horizons (1, 3, ..., Overall), Columns: points
+colnames(rmse_matrix) <- paste0("X", 1:length(sampled_points))  # Columns: X1, X2, ..., X30
+rownames(rmse_matrix) <- c("1", "3", "6", "9", "12", "Overall")  # Rows for horizons
 
 # Define a function to calculate RMSE
 calculate_rmse <- function(actual, forecasted) {
-  sqrt(mean((actual - forecasted)^2))
+  valid_indices <- !is.na(actual) & !is.na(forecasted)  # Ignore NA values
+  sqrt(mean((actual[valid_indices] - forecasted[valid_indices])^2))
 }
 
 # Iterate over each point to optimize ARIMA parameters using grid search
@@ -78,9 +84,17 @@ for (point in sampled_points) {
     filter(point_id == point) %>%
     arrange(Date)
   
-  ts_data <- ts(point_data$Value,
-                start = c(year(min(point_data$Date)), month(min(point_data$Date))),
-                frequency = 6)
+  test_point_data <- test_Changi %>%
+    filter(point_id == point) %>%
+    arrange(Date)
+  
+  ts_train_data <- ts(point_data$Value,
+                      start = c(year(min(point_data$Date)), month(min(point_data$Date))),
+                      frequency = 6)
+  
+  ts_test_data <- ts(test_point_data$Value,
+                     start = c(year(min(test_point_data$Date)), month(min(test_point_data$Date))),
+                     frequency = 6)
   
   best_rmse <- Inf
   best_order <- c(0, 1, 1)  # Default ARIMA order
@@ -101,18 +115,18 @@ for (point in sampled_points) {
             for (sq in seasonal_q_values) {
               # Fit the ARIMA model with the grid parameters
               model <- tryCatch({
-                arima(ts_data, order = c(p, d, q), seasonal = list(order = c(sp, sd, sq), period = 6))
+                arima(ts_train_data, order = c(p, d, q), seasonal = list(order = c(sp, sd, sq), period = 6))
               }, error = function(e) NULL)
               
               if (!is.null(model)) {
                 # Forecast using the model
-                forecast_horizon <- length(ts_data)
+                forecast_horizon <- length(ts_train_data)
                 forecast_values <- forecast(model, h = forecast_horizon)
                 
                 # Calculate RMSE for the model
-                rmse <- calculate_rmse(point_data$Value, forecast_values$mean)
+                rmse <- calculate_rmse(ts_train_data, forecast_values$mean)
                 
-                if (rmse < best_rmse) {
+                if (!is.na(rmse) && rmse < best_rmse) {  # Ensure RMSE is valid
                   best_rmse <- rmse
                   best_order <- c(p, d, q, sp, sd, sq)
                   arima_models[[point]] <- model
@@ -127,27 +141,10 @@ for (point in sampled_points) {
   
   rmse_values <- rbind(rmse_values, data.frame(Point = point, RMSE = best_rmse))
   cat("Best ARIMA Order for Point", point, ": ", best_order, "\n")
-}
-
-# Print RMSE values
-print(rmse_values)
-
-# Forecast and Compare with Test Data for the best ARIMA models
-all_comparisons <- list()
-for (point in sampled_points) {
   
-  test_point_data <- test_Changi %>%
-    filter(point_id == point) %>%
-    arrange(Date)
-  
-  ts_test_data <- ts(test_point_data$Value,
-                     start = c(year(min(test_point_data$Date)), month(min(test_point_data$Date))),
-                     frequency = 6)
-  
-  model <- arima_models[[point]]
-  
+  # Forecast for the 2-year test horizon (12 bimonthly periods)
   forecast_horizon <- length(ts_test_data)
-  forecast_values <- forecast(model, h = forecast_horizon)
+  forecast_values <- forecast(arima_models[[point]], h = forecast_horizon)
   
   # Compare forecast with actual test data
   comparison <- data.frame(
@@ -161,10 +158,30 @@ for (point in sampled_points) {
   cat("\nComparison for Point:", point, "\n")
   print(comparison)
   
-  # Add comparison data to the list for facet wrap plotting
-  comparison$Point <- point
-  all_comparisons[[point]] <- comparison
+  # Calculate RMSE for specific horizons
+  rmse_horizons <- sapply(c(1, 3, 6, 9, 12), function(h) {
+    if (h <= length(ts_test_data)) {
+      calculate_rmse(ts_test_data[h], forecast_values$mean[h])
+    } else {
+      NA  # Handle cases where h exceeds the test data length
+    }
+  })
+  
+  # Calculate Overall RMSE for all 12 forecast steps
+  rmse_overall <- calculate_rmse(ts_test_data, forecast_values$mean)
+  
+  # Store RMSE values in the matrix
+  rmse_matrix[1:5, sampled_points == point] <- rmse_horizons  # Store horizon-specific RMSEs
+  rmse_matrix[6, sampled_points == point] <- rmse_overall  # Store Overall RMSE
 }
 
+# Combine all comparison data into a single data frame
+comparison_data <- bind_rows(all_comparisons)
 
+# Convert matrix to data frame for cleaner output
+rmse_dataframe <- as.data.frame(rmse_matrix)
 
+# Print the RMSE table
+print(rmse_dataframe)
+
+write.csv(rmse_dataframe, "RMSE_23-2.csv", row.names = TRUE)
