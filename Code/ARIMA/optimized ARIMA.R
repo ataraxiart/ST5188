@@ -81,7 +81,7 @@ for (point in sampled_points) {
   ts_data <- ts(point_data$Value,
                 start = c(year(min(point_data$Date)), month(min(point_data$Date))),
                 frequency = 6)
-   
+  
   best_rmse <- Inf
   best_order <- c(0, 1, 1)  # Default ARIMA order
   
@@ -166,38 +166,5 @@ for (point in sampled_points) {
   all_comparisons[[point]] <- comparison
 }
 
-# Combine all comparison data into a single data frame
-comparison_data <- bind_rows(all_comparisons)
-
-# Define a data frame to store RMSE for test data
-test_rmse_values <- data.frame(Point = character(), RMSE = numeric())
-
-# Loop for comparing forecast with test data
-for (point in sampled_points) {
-  
-  test_point_data <- test_Changi %>%
-    filter(point_id == point) %>%
-    arrange(Date)
-  
-  ts_test_data <- ts(test_point_data$Value,
-                     start = c(year(min(test_point_data$Date)), month(min(test_point_data$Date))),
-                     frequency = 6)
-  
-  model <- arima_models[[point]]
-  
-  forecast_horizon <- length(ts_test_data)
-  forecast_values <- forecast(model, h = forecast_horizon)
-  
-  # Calculate RMSE for test data
-  test_rmse <- calculate_rmse(test_point_data$Value, forecast_values$mean)
-  
-  # Store the RMSE value in the data frame
-  test_rmse_values <- rbind(test_rmse_values, data.frame(Point = point, RMSE = test_rmse))
-  
-  cat("\nTest RMSE for Point:", point, ":", test_rmse, "\n")
-}
-
-# Print Test RMSE values
-print(test_rmse_values)
 
 
