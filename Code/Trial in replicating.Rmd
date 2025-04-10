@@ -566,7 +566,6 @@ if (!file.exists(output_file_long) || !file.exists(output_file_wide)) {
 ```{r}
 # this chunk is to LOAD the pre-processed Jurong East data —————
 
-# Defining file path RELATIVE to the Rmd file (same as saving path)
 output_file_long <- file.path("../Data/Final/final_jurong east_long.csv")
 
 if (file.exists(output_file_long)) {
@@ -602,7 +601,7 @@ if (!file.exists(output_gif_je)) {
   gif_je <- py$create_lst_animation(final_je_long, subzone = "JURONG EAST", fps = 2, output_path = output_gif_je)
   message(paste("LST animation saved to:", output_gif_je))
 } else {
-  message("LST animation for CHANGI already exists. Skipping generation.")
+  message("LST animation for JURONG EAST already exists. Skipping generation.")
   gif_je <- output_gif_je # Use the existing file path
 }
 
@@ -630,7 +629,6 @@ print(je_prob_plot)
 To better understand the distribution of the NA values, we plot the following:
 
 ```{r}
-
 subzone <- "JURONG EAST"
 cache_dir <- "../Data/Misc/SavedRDS"
 dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
@@ -677,7 +675,7 @@ if (file.exists(combined_cache) && file.exists(na_counts_cache)) {
   
   # Combine results
   rds_img <- list.files(temp_rds_dir, full.names = TRUE)
-  rds_changi_combined <- bind_rows(lapply(rds_img, readRDS))
+  rds_je_combined <- bind_rows(lapply(rds_img, readRDS))
   
   # Save to cache
   saveRDS(je_NA, combined_cache)
@@ -695,7 +693,7 @@ stopifnot("No results generated" = exists("je_NA") && exists("rds_je_combined"))
 #| fig.width: 10
 
 
-# Define the output GIF file path for CHANGI NA animation
+# Define the output GIF file path for JURONG EAST NA animation
 output_gif_je_NA <- "../Data/Misc/gif/NA_animation_JURONG EAST.gif"
 
 # To check if the GIF file already exists
@@ -703,7 +701,7 @@ if (!file.exists(output_gif_je_NA)) {
   gif_je_NA <- py$create_na_animation(je_NA, subzone = "JURONG EAST", value_df = rds_je_combined, fps = 2, output_path = output_gif_je_NA)
   message(paste("NA animation for JURONG EAST saved to:", output_gif_je_NA))
 } else {
-  message("NA animation for CHANGI already exists. Skipping generation.")
+  message("NA animation for JURONG EAST already exists. Skipping generation.")
   gif_je_NA <- output_gif_je_NA
 }
 
@@ -728,25 +726,58 @@ plot(plot_boundary(subzone), add = TRUE,  col = rgb(0, 0, 1, alpha = 0.4))
 First, we preprocessed our data using the following codes, and obtained a dataframe called `final_jw_long`:
 
 ```{r, results='hide'}
-# this chunk is to pre-process jurong west's landsat7 & landsat8 data —————
+# this chunk is to pre-process jurong west's landsat7 & landsat8 data
 
 subzone <- "JURONG WEST"
 
-# landsat 7
-# extract, impute and combine data from images
-df_jw7 <- combine_img(subzone, landsat_no = 7) # takes around 3-4 mins
-rownames(df_jw7) <- NULL
+# Define file paths to save the processed data RELATIVE to the Rmd file
+output_file_long <- file.path("../Data/Final/final_jurong west_long.csv")
+output_file_wide <- file.path("../Data/Final/final_jurong west_wide.csv")
 
-# landsat 8
-df_jw8 <- combine_img(subzone, landsat_no = 8)
-rownames(df_jw8) <- NULL
+# Check if the saved files already exist
+if (!file.exists(output_file_long) || !file.exists(output_file_wide)) {
+  message("Pre-processed data for JURONG WEST not found. Running preprocessing")
+  # landsat 7
+  df_jw7 <- combine_img(subzone, landsat_no = 7) # takes around 3-4 mins
+  rownames(df_jw7) <- NULL
 
-merged_jw <- merge_ldst(df_jw7, df_jw8)
+  # landsat 8
+  df_jw8 <- combine_img(subzone, landsat_no = 8)
+  rownames(df_jw8) <- NULL
 
-# aggregate temporally and obtain final data
-final_jw_long <- st_aggregate(merged_jw, subzone)[[1]]
-final_jw_wide <- st_aggregate(merged_jw, subzone)[[2]]
+  merged_jw <- merge_ldst(df_jw7, df_jw8)
+
+  # aggregate temporally and obtain final data
+  final_jw_long <- st_aggregate(merged_jw, subzone)[[1]]
+  final_jw_wide <- st_aggregate(merged_jw, subzone)[[2]]
+
+  # Save the results to CSV files RELATIVE to the Rmd file
+  write.csv(final_jw_long, output_file_long, row.names = FALSE)
+  write.csv(final_jw_wide, output_file_wide, row.names = FALSE)
+  message("Pre-processed data for JURONG WEST saved to CSV files.")
+} else {
+  message("Pre-processed data for JURONG WEST already exists. Skipping preprocessing.")
+  # The data will be loaded in a subsequent chunk
+}
 ```
+
+```{r}
+# this chunk is to LOAD the pre-processed Jurong East data —————
+
+output_file_long <- file.path("../Data/Final/final_jurong west_long.csv")
+
+if (file.exists(output_file_long)) {
+  final_jw_long <- read.csv(output_file_long)
+  # Ensure 'date' column is treated as Date if it exists
+  if ("date" %in% colnames(final_jw_long)) {
+    final_jw_long$date <- as.Date(final_jw_long$date)
+  }
+  print("Pre-processed JURONG WEST data loaded successfully.")
+} else {
+  print("Pre-processed JURONG WEST data file not found. Ensure the preprocessing chunk has been run at least once to save the data.")
+}
+```
+
 
 By using `final_jw_long`, we can see how the LST values changes over time:
 
@@ -755,10 +786,24 @@ By using `final_jw_long`, we can see how the LST values changes over time:
 #| fig.width: 10
 # this chunk is to conduct exploratory data analysis —————
 
+# Ensure the 'eda' function is defined and sourced
 eda(final_jw_long)
 
-gif_jw <- py$create_lst_animation(final_jw_long, subzone = "JURONG WEST", fps = 2)
+# Define the output GIF file path
+output_gif_jw <- ("../Data/Misc/gif/LST_animation_JURONG WEST.gif")
+
+# Check if the GIF file already exists
+if (!file.exists(output_gif_jw)) {
+  message("Generating LST animation for JURONG WEST...")
+  gif_jw <- py$create_lst_animation(final_jw_long, subzone = "JURONG WEST", fps = 2, output_path = output_gif_jw)
+  message(paste("LST animation saved to:", output_gif_jw))
+} else {
+  message("LST animation for JURONG WEST already exists. Skipping generation.")
+  gif_jw <- output_gif_jw # Use the existing file path
+}
+
 include_graphics(gif_jw)
+
 ```
 
 To check how many NA values are present in each image, we can compute some summary statistics:
@@ -781,23 +826,65 @@ print(jw_prob_plot)
 To better understand the distribution of the NA values, we plot the following:
 
 ```{r, results='hide'}
-jw_NA7 <- combine_distributionNA("JURONG WEST", 7)
-jw_NA8 <- combine_distributionNA("JURONG WEST", 8)
+subzone <- "JURONG WEST"
+cache_dir <- "../Data/Misc/SavedRDS"
+dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
 
-jw_NA <- bind_rows(jw_NA7, jw_NA8) |>
+# Define cache files
+combined_cache <- file.path(cache_dir, "jw_combined_data.RDS")
+na_counts_cache <- file.path(cache_dir, "jw_na_counts.RDS")
+
+# Check if cached results exist
+if (file.exists(combined_cache) && file.exists(na_counts_cache)) {
+  message("Using the cached results.")
+  jw_NA <- readRDS(combined_cache)
+  rds_jw_combined <- readRDS(na_counts_cache)
+} else {
+  message("As no cached results found, processing data")
+  
+  # Process combined distributions
+  jw_NA7 <- combine_distributionNA(subzone, 7)
+  jw_NA8 <- combine_distributionNA(subzone, 8)
+  
+  jw_NA <- bind_rows(jw_NA7, jw_NA8) |>
     group_by(x, y, date) |>
     summarise(LST = mean(LST, na.rm = TRUE), .groups = "drop") |> 
-  mutate(missing = ifelse(is.na(LST), 1, 0))
+    mutate(missing = ifelse(is.na(LST), 1, 0))
+  
+  # Process NA counts
+  temp_rds_dir <- file.path(cache_dir, "temp")
+  dir.create(temp_rds_dir, showWarnings = FALSE)
+  
+  # Clear only temporary files, not the main cache
+  temp_files <- list.files(temp_rds_dir, full.names = TRUE)
+  if (length(temp_files) > 0) file.remove(temp_files)
+  
+  # Get image files
+  ls_img <- c(
+    list.files("../Data/Landsat/GEE_landsat7", "\\.tif$", full.names = TRUE),
+    list.files("../Data/Landsat/GEE_landsat8", "\\.tif$", full.names = TRUE)
+  )
+  
+  # Process with progress
+  pbapply::pblapply(ls_img, function(img) {
+    count_NA_region(img, subzone)
+  })
+  
+  # Combine results
+  rds_img <- list.files(temp_rds_dir, full.names = TRUE)
+  rds_jw_combined <- bind_rows(lapply(rds_img, readRDS))
+  
+  # Save to cache
+  saveRDS(jw_NA, combined_cache)
+  saveRDS(rds_jw_combined, na_counts_cache)
+  
+  # Clean up temp files
+  unlink(temp_rds_dir, recursive = TRUE)
+}
 
-existing_rds <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
-if(length(existing_rds) > 0) { 
-  file.remove(existing_rds) 
-  }
-
-lapply(ls_img, function(img) count_NA_region(img, "JURONG WEST"))
-
-rds_img <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
-rds_jw_combined <- bind_rows(lapply(rds_img, readRDS))
+# Verify results
+stopifnot("No results generated" = exists("jw_NA") && exists("rds_jw_combined"))
+```
 ```
 
 ```{r}
