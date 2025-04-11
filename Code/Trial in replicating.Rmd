@@ -692,7 +692,6 @@ stopifnot("No results generated" = exists("je_NA") && exists("rds_je_combined"))
 ```{r}
 #| fig.width: 10
 
-
 # Define the output GIF file path for JURONG EAST NA animation
 output_gif_je_NA <- "../Data/Misc/gif/NA_animation_JURONG EAST.gif"
 
@@ -762,7 +761,7 @@ if (!file.exists(output_file_long) || !file.exists(output_file_wide)) {
 ```
 
 ```{r}
-# this chunk is to LOAD the pre-processed Jurong East data —————
+# this chunk is to LOAD the pre-processed Jurong West data —————
 
 output_file_long <- file.path("../Data/Final/final_jurong west_long.csv")
 
@@ -811,7 +810,7 @@ To check how many NA values are present in each image, we can compute some summa
 ```{r}
 write.csv(all_results |>
             filter(subzone == "JURONG WEST"), 
-          "../Data/Misc/JURONG EAST_NA_Results.csv", row.names = FALSE)
+          "../Data/Misc/JURONG WEST_NA_Results.csv", row.names = FALSE)
 
 # summary statistics for missing values for Jurong West
 jw_summary <- create_subzone_summary(all_results, "JURONG WEST")
@@ -885,11 +884,22 @@ if (file.exists(combined_cache) && file.exists(na_counts_cache)) {
 # Verify results
 stopifnot("No results generated" = exists("jw_NA") && exists("rds_jw_combined"))
 ```
-```
 
 ```{r}
 #| fig.width: 10
 
-gif_jw_NA <- py$create_na_animation(jw_NA, subzone = "JURONG WEST", value_df = rds_jw_combined, fps = 2)
+# Define the output GIF file path for JURONG WEST NA animation
+output_gif_jw_NA <- "../Data/Misc/gif/NA_animation_JURONG WEST.gif"
+
+# To check if the GIF file already exists
+if (!file.exists(output_gif_jw_NA)) {
+  gif_jw_NA <- py$create_na_animation(jw_NA, subzone = "JURONG WEST", value_df = rds_jw_combined, fps = 2, output_path = output_gif_jw_NA)
+  message(paste("NA animation for JURONG WEST saved to:", output_gif_jw_NA))
+} else {
+  message("NA animation for JURONG WEST already exists. Skipping generation.")
+  gif_jw_NA <- output_gif_jw_NA
+}
+
 include_graphics(gif_jw_NA)
+```
 ```
