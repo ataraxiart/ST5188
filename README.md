@@ -1,7 +1,3 @@
----
----
----
-
 ### ST5188-Advanced Data Science Project
 
 ### Project Group PG01: Forecasting Urban Heat Effect with Spatio-temporal Gaussian Processes
@@ -103,6 +99,10 @@ Focusing on Singapore region, this project is focused on mid-term LST forecastin
 
 #### Scripts:
 
+-   [Changi imputed and restructured.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/CHANGI%20IMPUTED%20DATA%20RESTRUCTURE.R) :Restructures imputed Land Surface Temperature data into a complete data format with consistent formatting and no missing location data combinations.
+
+<!-- -->
+
 -   [unoptimized ARIMA.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/unoptimized%20ARIMA.R): to handle basic spatio temporal forecasting for temperature data across geographic points.
 
     -   `process_neighborhood()`: Main function for training and forecasting per location
@@ -119,7 +119,7 @@ Focusing on Singapore region, this project is focused on mid-term LST forecastin
 
 -   [Rolling window and RMSE.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/Rolling%20window%20and%20RMSE.R): Implements time-based cross validation by testing models on multiple training windows (9-13 years) by taking 10 random samples per window. It also calculates RMSE for each forecast horizon (1/3/9/12 months) across all 30 points.
 
--   [Changi imputed and restructured.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/CHANGI%20IMPUTED%20DATA%20RESTRUCTURE.R) :Restructures imputed Land Surface Temperature data into a complete data format with consistent formatting and no missing location data combinations.
+    #### [Run_ARIMA.R](https://github.com/ataraxiart/ST5188/blob/0b034138d2feb9137eda013210dd461794bfdcfc/Code/ARIMA/Run_ARIMA.R): Master script for executing all individual ARIMA scripts in correct order
 
     #### Dependencies:
 
@@ -131,15 +131,15 @@ Focusing on Singapore region, this project is focused on mid-term LST forecastin
 
     -   tidyr \| 1.3.1
 
-    -   forecast\| 8.23.0
+    -   forecast\| 8.23.0 \| ARIMA modeling and forecasting
 
-    -   urca \|1.3-4
+    -   urca \|1.3-4 \| Unit root tests
 
     -   ggplot2 \| 3.5.1
 
     -   cluster \| 2.1.6
 
-    -   lubridate\| 1.9.3
+    -   lubridate\| 1.9.3 \| Date-time manipulation
 
     -   here\| 1.0.1
 
