@@ -12,8 +12,6 @@
 
 Focusing on Singapore region, this project is focused on mid-term LST forecasting (6-24 months ahead) by using 562 satellite images (TIF files) from Google Earth Engine (GEE) as our dataset. Exploratory Data Analysis (EDA) is performed on the data initially to understand the different characteristics present in the data.
 
-[[Yet to add in the later analysis info also]]
-
 ------------------------------------------------------------------------
 
 ### Satellite Data
@@ -44,7 +42,7 @@ Focusing on Singapore region, this project is focused on mid-term LST forecastin
 
 ------------------------------------------------------------------------
 
-### Preprocessing Explanatory Data Analysis
+### Preprocessing & Explanatory Data Analysis
 
 -   [Code/Preprocessing/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing): This directory contains the R and Python scripts used for data preprocessing and EDA.
 
@@ -62,7 +60,9 @@ Focusing on Singapore region, this project is focused on mid-term LST forecastin
 
     ------------------------------------------------------------------------
 
--   R (Version 4.4.1) Dependencies-Libraries used for this portion with their versions are:
+    ### Dependencies
+
+-   R (Version 4.4.1) -Packages used for this portion with their versions are:
 
     -   terra \|1.8.21\| Provides methods for manipulating spatial data in raster and vector data types
 
@@ -78,9 +78,9 @@ Focusing on Singapore region, this project is focused on mid-term LST forecastin
 
     -   matplotlib\| 3.9.4\| For creating plots and animations. Specifically, it uses \`matplotlib.pyplot\` for plotting functions and \`matplotlib.colors\` for color map manipulation. 
     -   matplotlib.colors.LinearSegmentedColormap \|3.9.4\| Used for defining custom color maps for visualization. 
-    -   matplotlib.patches.Patch \| 3.9.4 \| for creating legend elements or other graphical patches.
+    -   matplotlib.patches.Patch \| 3.9.4 \| For creating legend elements or other graphical patches.
     -   numpy \| 1.26.4 \| For numerical operations, especially handling arrays of image data. 
-    -   os\| built in \| For interacting with the operating system, such as handling file paths. 
+    -   os\| built in \| For interacting with the operating system, such as handling file paths. 
     -   imageio \| 2.37.0 \|For reading and writing image files, which is essential for creating the animated GIFs.
 
     [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/create_na_animation.py) depends on additionally these 2 libraries:
@@ -91,39 +91,37 @@ Focusing on Singapore region, this project is focused on mid-term LST forecastin
 
 ------------------------------------------------------------------------
 
-## Baseline Models:
+## Baseline Models
 
 ### Autoregressive Integrated Moving Average (ARIMA)
 
-#### Data Preparation:
+#### Data Source: [Data/Final/Imputation](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation)
 
-Reads imputed training ([imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation/imp_train_set.csv)) and testing ([imp_test_set.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation/imp_test_set.csv)) datasets from [Data/Final/Imputation](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation).
+-    [imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation/imp_train_set.csv): Training dataset
 
--   [unoptimized ARIMA.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/unoptimized%20ARIMA.R): to handle spatio temporal forecasting for temperature data across geographic points. The main functions under used in this portion are as follows.
+-    [imp_test_set.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation/imp_test_set.csv): Testing dataset
 
-    -   process_neighborhood: executes the whole process ARIMA modeling workflow for the area by handling data loading, spatial sampling, model fitting and also forecasting
+#### Scripts:
 
-    -    convert_period_to_date: converts period in string format to Date as objects.
+-   [unoptimized ARIMA.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/unoptimized%20ARIMA.R): to handle basic spatio temporal forecasting for temperature data across geographic points.
 
--   [optimized ARIMA.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/optimized%20ARIMA.R): This provides automated optimized ARIMA modeling for 30 geographic points also generating seasonally adjusted temperature forcats with accuracy metrics
+    -   `process_neighborhood()`: Main function for training and forecasting per location
 
-    -   convert_period_to_date: to convert date from string format to object type.
+    -    `convert_period_to_date()`: Converts period in string format to `Date` as objects.
 
-    <!-- -->
+-   [optimized ARIMA.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/optimized%20ARIMA.R): Automates optimized ARIMA modeling for 30 geographic points also generating seasonally adjusted temperature forcats with accuracy metrics
 
-    -   calculate_rmse: Calculates the Root Mean Squared Error (RMSE) values using the observed and forcasted value.
+    -   `calculate_rmse()`: Calculates the Root Mean Squared Error (RMSE) values using the observed and forcasted value.
 
     -    Grid Search loop: Tests best ARIMA order point by iterating over each point and returning the RMSE value.
 
--   [Optimized ARIMA with RMSE.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/Optimized%20ARIMA%20with%20RMSE.R) : This is performing the model evaluation and comparison by having its primary output as RMSE matrix and validation as quantified accuracy across specified horizons.
+-   [Optimized ARIMA with RMSE.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/Optimized%20ARIMA%20with%20RMSE.R) : Model is evaluated and compared by having primary output as RMSE matrices across horizons
 
-    It has the similar custom functions created in [optimized_ARIMA.R/](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/optimized%20ARIMA.R)
+-   [Rolling window and RMSE.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/Rolling%20window%20and%20RMSE.R): Implements time-based cross validation by testing models on multiple training windows (9-13 years) by taking 10 random samples per window. It also calculates RMSE for each forecast horizon (1/3/9/12 months) across all 30 points.
 
--   [Rolling window and RMSE.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/Rolling%20window%20and%20RMSE.R):It is implementing time based cross validation by testing models on multiple training windows (9-13 years) by taking 10 random samples per window. It also calculates RMSE for each forecast horizon (1/3/9/12 months) across all 30 points.
+-   [Changi imputed and restructured.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/CHANGI%20IMPUTED%20DATA%20RESTRUCTURE.R) :Restructures imputed Land Surface Temperature data into a complete data format with consistent formatting and no missing location data combinations.
 
-    Even this reusing custom function already created in [optimized_ARIMA.R/](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/optimized%20ARIMA.R)
-
--   [Changi imputed and restructured.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/CHANGI%20IMPUTED%20DATA%20RESTRUCTURE.R) :It restructures imputed Land Surface Temperature data into a complete data format with consistent formatting and no missing location data combinations.
+    #### Dependencies:
 
 -   R (Version 4.4.1) :Libraries along with their versions used in this section are:
 
