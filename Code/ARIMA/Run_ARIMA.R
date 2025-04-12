@@ -10,9 +10,10 @@ library(lubridate)
 library(here)
 library(tibble)
 
-# Run baseline models
+# Run ARIMA codes
+source(here("Code/ARIMA/CHANGI IMPUTED DATA RESTRUCTURE.R"))
 source(here("Code/ARIMA/unoptimized ARIMA.R"))
 source(here("Code/ARIMA/optimized ARIMA.R"))
 source(here("Code/ARIMA/Optimized ARIMA with RMSE.R"))
 source(here("Code/ARIMA/Rolling window and RMSE.R"))
-source(here("Code/ARIMA/Changi imputed and restructured.R"))
+
