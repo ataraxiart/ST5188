@@ -64,49 +64,39 @@ Baseline models like ARIMA, LSTMs and Gaussian Process is performed
 
 -   **R (Version 4.4.1)**:
 
-    +--------------+------------+-----------------------------------------------------------+
-    | Packages     | Version    | Comments                                                  |
-    +==============+============+===========================================================+
-    | `terra`      | 1.8.21     | Manipulating spatial data in raster and vector data types |
-    +--------------+------------+-----------------------------------------------------------+
-    | `sf`         | 1.0-16     | Encoding and analysing spatial data                       |
-    +--------------+------------+-----------------------------------------------------------+
-    | `dplyr`      | 1.1.4      | Simplifies data manipulation                              |
-    +--------------+------------+-----------------------------------------------------------+
-    | `data.table` | 1.16.0     | Aggregating large datasets                                |
-    +--------------+------------+-----------------------------------------------------------+
-    | `pbapply`    | 1.7-2      | For progress bar                                          |
-    +--------------+------------+-----------------------------------------------------------+
-    | `reticulate` | 1.41.0     | To convert .ipnyb files to .py format                     |
-    +--------------+------------+-----------------------------------------------------------+
+    | Packages | Version | Comments |
+    |----|----|----|
+    | `terra` | 1.8.21 | Manipulating spatial data in raster and vector data types |
+    | `sf` | 1.0-16 | Encoding and analysing spatial data |
+    | `dplyr` | 1.1.4 | Simplifies data manipulation |
+    | `data.table` | 1.16.0 | Aggregating large datasets |
+    | `pbapply` | 1.7-2 | For progress bar |
+    | `reticulate` | 1.41.0 | To convert .ipnyb files to .py format |
 
 -   **Python (Version 3.9.6)**-For Python script [`create_lst_animation.py`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/create_lst_animation.py)
 
-    +--------------+-----------+-----------------------------------------------------------------+------------------------------------+
-    | Packages     | Version   | Comments                                                        | Key classes                        |
-    +==============+===========+=================================================================+====================================+
-    | `matplotlib` | 3.9.4     | For creating plots and animations.                              | -   pyplot                         |
-    |              |           |                                                                 |                                    |
-    |              |           |                                                                 | -   colors.LinearSegmentedColormap |
-    |              |           |                                                                 |                                    |
-    |              |           |                                                                 | -   patches                        |
-    +--------------+-----------+-----------------------------------------------------------------+------------------------------------+
-    | `numpy`      | 1.26.4    | For numerical operations, like handling arrays of image data    | \-                                 |
-    +--------------+-----------+-----------------------------------------------------------------+------------------------------------+
-    | `os`         | built in  | for interacting with operating system, like handling file paths | \-                                 |
-    +--------------+-----------+-----------------------------------------------------------------+------------------------------------+
-    | `imageio`    | 2.37.0    | For reading and writing image files essential for animated GIFs | \-                                 |
-    +--------------+-----------+-----------------------------------------------------------------+------------------------------------+
+    +--------------+----------+-----------------------------------------------------------------+------------------------------------+
+    | Packages     | Version  | Comments                                                        | Key classes                        |
+    +==============+==========+=================================================================+====================================+
+    | `matplotlib` | 3.9.4    | For creating plots and animations.                              | -   pyplot                         |
+    |              |          |                                                                 |                                    |
+    |              |          |                                                                 | -   colors.LinearSegmentedColormap |
+    |              |          |                                                                 |                                    |
+    |              |          |                                                                 | -   patches                        |
+    +--------------+----------+-----------------------------------------------------------------+------------------------------------+
+    | `numpy`      | 1.26.4   | For numerical operations, like handling arrays of image data    | \-                                 |
+    +--------------+----------+-----------------------------------------------------------------+------------------------------------+
+    | `os`         | built in | for interacting with operating system, like handling file paths | \-                                 |
+    +--------------+----------+-----------------------------------------------------------------+------------------------------------+
+    | `imageio`    | 2.37.0   | For reading and writing image files essential for animated GIFs | \-                                 |
+    +--------------+----------+-----------------------------------------------------------------+------------------------------------+
 
     For [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/Preprocessing/create_na_animation.py),it depends on additionally these 2 libraries:
 
-    +-------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+
-    | Packages    | Version  | Comments                                                                                                                                             |
-    +=============+==========+======================================================================================================================================================+
-    | `geopandas` | 1.0.1    | For geospatial vector data (like shapefiles or GeoJSON) which extends functionality of pandas to handle geographic data                              |
-    +-------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+
-    | `pandas`    | \>=1.4.0 | Fundamental library for data manipulation and analysis providing data structures like Data Frames and Series,essential for working with tabular data |
-    +-------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+
+    | Packages | Version | Comments |
+    |----|----|----|
+    | `geopandas` | 1.0.1 | For geospatial vector data (like shapefiles or GeoJSON) which extends functionality of pandas to handle geographic data |
+    | `pandas` | \>=1.4.0 | Fundamental library for data manipulation and analysis providing data structures like Data Frames and Series,essential for working with tabular data |
 
 ------------------------------------------------------------------------
 
@@ -148,29 +138,18 @@ Baseline models like ARIMA, LSTMs and Gaussian Process is performed
 
 -   **R (Version 4.4.1)** :
 
-    +-----------------+----------------+--------------------------------+
-    | Packages        | Version        | Comments                       |
-    +=================+================+================================+
-    | `dplyr`         | 1.1.4          |                                |
-    +-----------------+----------------+--------------------------------+
-    | `readr`         | 2.1.5          |                                |
-    +-----------------+----------------+--------------------------------+
-    | `tidyr`         | 1.3.1          |                                |
-    +-----------------+----------------+--------------------------------+
-    | `forecast`      | 8.23.0         | ARIMA modeling and forecasting |
-    +-----------------+----------------+--------------------------------+
-    | `urca`          | 1.3-4          | Unit root tests                |
-    +-----------------+----------------+--------------------------------+
-    | `ggplot2`       | 3.5.1          |                                |
-    +-----------------+----------------+--------------------------------+
-    | `cluster`       | 2.1.6          |                                |
-    +-----------------+----------------+--------------------------------+
-    | `lubridate`     | 1.9.3          | Date-time manipulation         |
-    +-----------------+----------------+--------------------------------+
-    | `here`          | 1.0.1          |                                |
-    +-----------------+----------------+--------------------------------+
-    | `tibble`        | 3.2.1          |                                |
-    +-----------------+----------------+--------------------------------+
+    | Packages    | Version | Comments                       |
+    |-------------|---------|--------------------------------|
+    | `dplyr`     | 1.1.4   |                                |
+    | `readr`     | 2.1.5   |                                |
+    | `tidyr`     | 1.3.1   |                                |
+    | `forecast`  | 8.23.0  | ARIMA modeling and forecasting |
+    | `urca`      | 1.3-4   | Unit root tests                |
+    | `ggplot2`   | 3.5.1   |                                |
+    | `cluster`   | 2.1.6   |                                |
+    | `lubridate` | 1.9.3   | Date-time manipulation         |
+    | `here`      | 1.0.1   |                                |
+    | `tibble`    | 3.2.1   |                                |
 
 ### LSTMs
 
@@ -205,15 +184,11 @@ Baseline models like ARIMA, LSTMs and Gaussian Process is performed
 
 -   **Python (Version 3.9.6)**
 
-    +-----------+----------+
-    | Packages  | Version  |
-    +===========+==========+
-    | `pyTorch` | 2.6.0    |
-    +-----------+----------+
-    | `pandas`  | 2.0.3    |
-    +-----------+----------+
-    | `numPy`   | 1.23.5   |
-    +-----------+----------+
+    | Packages  | Version |
+    |-----------|---------|
+    | `pyTorch` | 2.6.0   |
+    | `pandas`  | 2.0.3   |
+    | `numPy`   | 1.23.5  |
 
 ### \>With Rolling Windows
 
@@ -248,7 +223,7 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
     -   10 random train-test splits per window size.
 
-    -   Train: `window_size * 6` steps → Test: Next 12 steps.
+    -   Train: `window_size * 6` steps → Test: Next 12 steps.
 
 -   **Metrics**: RMSE at 1st, 3rd, 6th, 9th, 12th steps and overall.
 
@@ -266,49 +241,31 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 ### Output files:
 
-+-----------------+----------------+-----------------------+
-| **Window Size** | **Dropout**    | **Output File**       |
-+:================+:===============+:======================+
-| 9               | No             | `rmse_9.csv`          |
-+-----------------+----------------+-----------------------+
-| 9               | Yes            | `rmse_dropout_9.csv`  |
-+-----------------+----------------+-----------------------+
-| 10              | No             | `rmse_10.csv`         |
-+-----------------+----------------+-----------------------+
-| 10              | Yes            | `rmse_dropout_10.csv` |
-+-----------------+----------------+-----------------------+
-| 11              | No             | `rmse_11.csv`         |
-+-----------------+----------------+-----------------------+
-| 11              | Yes            | `rmse_dropout_11.csv` |
-+-----------------+----------------+-----------------------+
-| 12              | No             | `rmse_12.csv`         |
-+-----------------+----------------+-----------------------+
-| 12              | Yes            | `rmse_dropout_12.csv` |
-+-----------------+----------------+-----------------------+
-| 13              | No             | `rmse_13.csv`         |
-+-----------------+----------------+-----------------------+
-| 13              | Yes            | `rmse_dropout_13.csv` |
-+-----------------+----------------+-----------------------+
+| **Window Size** | **Dropout** | **Output File**       |
+|:----------------|:------------|:----------------------|
+| 9               | No          | `rmse_9.csv`          |
+| 9               | Yes         | `rmse_dropout_9.csv`  |
+| 10              | No          | `rmse_10.csv`         |
+| 10              | Yes         | `rmse_dropout_10.csv` |
+| 11              | No          | `rmse_11.csv`         |
+| 11              | Yes         | `rmse_dropout_11.csv` |
+| 12              | No          | `rmse_12.csv`         |
+| 12              | Yes         | `rmse_dropout_12.csv` |
+| 13              | No          | `rmse_13.csv`         |
+| 13              | Yes         | `rmse_dropout_13.csv` |
 
 ### Dependencies:
 
 -   Python (Version 3.9.6): Libraries used in this portion are
 
-    +----------------+---------------+
-    | Packages       | Version       |
-    +================+===============+
-    | `PyTorch`      | 2.6.0         |
-    +----------------+---------------+
-    | `Numpy`        | 1.26.4        |
-    +----------------+---------------+
-    | `Pandas`       | 2.2.3         |
-    +----------------+---------------+
-    | `GeoPandas`    | 1.0.1         |
-    +----------------+---------------+
-    | `Shapely`      | 2.0.7         |
-    +----------------+---------------+
-    | `Scikit-learn` | 1.6.1         |
-    +----------------+---------------+
+    | Packages       | Version |
+    |----------------|---------|
+    | `PyTorch`      | 2.6.0   |
+    | `Numpy`        | 1.26.4  |
+    | `Pandas`       | 2.2.3   |
+    | `GeoPandas`    | 1.0.1   |
+    | `Shapely`      | 2.0.7   |
+    | `Scikit-learn` | 1.6.1   |
 
 ### \>For Merging RMS stats
 
@@ -433,23 +390,15 @@ Run [Run_Initial_Experimentation.R](https://github.com/ataraxiart/ST5188/blob/76
 
 -   **R (Version 4.4.1)**
 
-    +-----------------------------------+-----------------------------------+
-    | Packages                          | Version                           |
-    +===================================+===================================+
-    | dplyr                             | 1.1.4                             |
-    +-----------------------------------+-----------------------------------+
-    | lubridate                         | 1.9.4                             |
-    +-----------------------------------+-----------------------------------+
-    | sf                                | 1.0-20                            |
-    +-----------------------------------+-----------------------------------+
-    | spTimer                           | 3.3.3                             |
-    +-----------------------------------+-----------------------------------+
-    | here                              | 1.0.1                             |
-    +-----------------------------------+-----------------------------------+
-    | tidyr \*                          | 1.3.1                             |
-    +-----------------------------------+-----------------------------------+
-    | purrr \*                          | 1.0.4                             |
-    +-----------------------------------+-----------------------------------+
+    | Packages  | Version |
+    |-----------|---------|
+    | dplyr     | 1.1.4   |
+    | lubridate | 1.9.4   |
+    | sf        | 1.0-20  |
+    | spTimer   | 3.3.3   |
+    | here      | 1.0.1   |
+    | tidyr \*  | 1.3.1   |
+    | purrr \*  | 1.0.4   |
 
     : \* indicates that these packages are used in the Final Stage Experimentation, that is [final_gp_rolling_window_experiment.R](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/spTimer/GP%20Experiment%20Files/final_gp_rolling_window_experiment.R) and [final_gp_23_2_experiment.R](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/spTimer/GP%20Experiment%20Files/final_gp_23_2_experiment.R) for efficient data manipulation, iteration over model parameters, and structuring the results.
 
