@@ -1,16 +1,7 @@
 #Changi
 
-library(dplyr)
-library(readr)
-library(tidyr)
-library(forecast)
-library(urca)
-library(ggplot2)
-library(cluster)
-library(lubridate)
-
-train_C <- read_csv("../../Data/Final/Imputation/imp_train_set.csv")
-test_C <- read_csv("../../Data/Final/Imputation/imp_test_set.csv")
+train_C<-read.csv(here("Data", "Final", "Imputation", "imp_train_set.csv"))
+test_C<-read.csv(here("Data", "Final", "Imputation", "imp_test_set.csv"))
 
 # Create a Unique Point Identifier
 train_Changi <- train_C %>%

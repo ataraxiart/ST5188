@@ -1,0 +1,905 @@
+---
+title: "ST5188 PG01 Exploratory Data Analysis"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r}
+#| include: FALSE
+# this chunk is to source all our functions —————
+# Clear R environment safely
+
+# Load necessary spatial packages
+library(terra)
+library(sf)
+library(dplyr)
+library(here)
+library(data.table)
+library(pbapply)
+
+# clear working directory
+rm(list = ls())
+scripts = list.files("../Code/Preprocessing", full.names = TRUE)
+
+reticulate::py_config()
+invisible(reticulate::py_install("matplotlib"))
+invisible(reticulate::py_install("imageio"))
+invisible(reticulate::py_install("geopandas"))
+# source libraries and functions under `Code` files
+for (file in scripts) {
+  print(paste("Sourcing:", file))
+  if (grepl("\\.R$", file)) {
+    source(file)
+  } else {
+    print(paste("Python sourcing:", file))
+    reticulate::source_python(file)
+  }
+}
+
+# check if all functions have been sourced
+ls()
+
+```
+
+### {.tabset .tabset-fade .tabset-pills}
+Let's perform exploratory data analysis on our dataset!
+
+```{r Singapore shapefile}
+#| include: FALSE
+# this chunk is to create the plot_boundary function and import img —————
+
+# Function to plot boundary for any subzone
+plot_boundary <- function(subzone) {
+  
+  # Load subzone shapefile
+   border <- st_read("../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", 
+                     quiet = TRUE) |>
+    select(PLN_AREA_N, geometry) |> 
+    filter(PLN_AREA_N == subzone) |> 
+    st_union() |> 
+    st_transform("EPSG:4326") |> 
+    st_sf()
+  
+  return(border)
+}
+
+# Example Image Import: Single Landsat 8 image
+img <- "../Data/Landsat/GEE_landsat8/LST_Singapore_2013-04-24.tif"
+r <- rast(img) |>
+  project("EPSG:4326") 
+
+```
+
+#### Changi
+
+We will be focusing on the LST values in the blue border below:
+
+```{r Changi plot}
+#| echo: FALSE
+#| fig.width: 10
+# this chunk is to plot Changi —————
+subzone <- "CHANGI"
+
+# Plot Base Raster (Landsat Image)
+plot(r)
+
+# Overlay Boundary with Transparency
+plot(plot_boundary(subzone), add = TRUE,  col = rgb(0, 0, 1, alpha = 0.4))
+
+```
+
+First, we preprocessed our data using the following codes, and obtained a dataframe called `final_changi_long`:
+
+```{r Preprocessing}
+#| results='hide'
+# this chunk is to pre-process Changi's landsat7 & landsat8 data and SAVE the result —————
+
+subzone <- "CHANGI"
+
+# Define file paths to save the processed data RELATIVE to the Rmd file
+output_file_long <- file.path("../Data/Final/final_changi_long.csv")
+output_file_wide <- file.path("../Data/Final/final_changi_wide.csv")
+
+# Check if the saved files already exist
+if (!file.exists(output_file_long) || !file.exists(output_file_wide)) {
+  message("Pre-processed data for CHANGI not found. Running preprocessing...")
+  # landsat 7
+  df_changi7 <- combine_img(subzone, landsat_no = 7) # takes around 3-4 mins
+  rownames(df_changi7) <- NULL
+
+  # landsat 8
+  df_changi8 <- combine_img(subzone, landsat_no = 8)
+  rownames(df_changi8) <- NULL
+
+  merged_changi <- merge_ldst(df_changi7, df_changi8)
+
+  # aggregate temporally and obtain final data
+  final_changi_long <- st_aggregate(merged_changi, subzone)[[1]]
+  final_changi_wide <- st_aggregate(merged_changi, subzone)[[2]]
+
+  # Save the results to CSV files RELATIVE to the Rmd file
+  write.csv(final_changi_long, output_file_long, row.names = FALSE)
+  write.csv(final_changi_wide, output_file_wide, row.names = FALSE)
+  message("Pre-processed data for CHANGI saved to CSV files.")
+} else {
+  message("Pre-processed data for CHANGI already exists. Skipping preprocessing.")
+  # The data will be loaded in a subsequent chunk
+}
+```
+
+```{r Loading preprocessed data}
+# this chunk is to LOAD the pre-processed changi data —————
+
+# Define file path RELATIVE to the Rmd file (same as saving path)
+output_file_long <- file.path("../Data/Final/final_changi_long.csv")
+
+if (file.exists(output_file_long)) {
+  final_changi_long <- read.csv(output_file_long)
+  # Ensure 'date' column is treated as Date if it exists
+  if ("date" %in% colnames(final_changi_long)) {
+    final_changi_long$date <- as.Date(final_changi_long$date)
+  }
+  print("Pre-processed CHANGI data loaded successfully.")
+} else {
+  print("Pre-processed CHANGI data file not found. Ensure the preprocessing chunk has been run at least once to save the data.")
+}
+```
+
+By using `final_changi_long`, we can obtain the following EDA results:
+
+```{r eda:Changi}
+#| echo: FALSE
+#| fig.width: 10
+# this chunk is to conduct exploratory data analysis and save the animation if not generated else it skips the generation steps retrieves th existing from previous run—————
+
+# Ensure the 'eda' function is defined and sourced
+eda(final_changi_long)
+
+# Define the output GIF file path
+output_gif_changi <- ("../Data/Misc/gif/LST_animation_CHANGI.gif")
+
+# Check if the GIF file already exists
+if (!file.exists(output_gif_changi)) {
+  message("Generating LST animation for CHANGI...")
+  gif_changi <- py$create_lst_animation(final_changi_long, subzone = "CHANGI", fps = 2, output_path = output_gif_changi)
+  message(paste("LST animation saved to:", output_gif_changi))
+} else {
+  message("LST animation for CHANGI already exists. Skipping generation.")
+  gif_changi <- output_gif_changi # Use the existing file path
+}
+
+include_graphics(gif_changi)
+```
+
+To check how many NA values are present in each image, we can compute some summary statistics:
+
+
+
+
+```{r missing values analysis:Changi, results='hide', include=FALSE}
+#| echo: TRUE
+#| message: TRUE
+#| warning: TRUE
+#| cache: FALSE 
+
+### EDA of Missing Values - Optimized with Caching ###
+
+output_dir <- "../Data/Misc"
+dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+
+# Define output files
+output_all_results <- file.path(output_dir, "all_results.rds")  # Using RDS for better preservation
+output_na_prob_dist <- file.path(output_dir, "na_prob_dist.rds")
+
+# Check for cached results
+if (file.exists(output_all_results) && file.exists(output_na_prob_dist)) {
+  message("Loading cached results...")
+  all_results <- readRDS(output_all_results)
+  na_prob_distribution <- readRDS(output_na_prob_dist)
+} else {
+  # Define subzones
+  subzones <- c("CHANGI", "JURONG EAST", "JURONG WEST")
+  
+  # Data Loading with Validation
+  landsat7_dir <- "../Data/Landsat/GEE_landsat7"
+  landsat8_dir <- "../Data/Landsat/GEE_landsat8"
+  
+  stopifnot("Landsat7 directory missing" = dir.exists(landsat7_dir),
+            "Landsat8 directory missing" = dir.exists(landsat8_dir))
+  
+  message("Listing image files...")
+  landsat7_images <- list.files(landsat7_dir, "\\.tif$", full.names = TRUE)
+  landsat8_images <- list.files(landsat8_dir, "\\.tif$", full.names = TRUE)
+  
+  # Process images with progress bar
+  process_images <- function(images, landsat_no) {
+    if (length(images) == 0) return(data.table())
+    rbindlist(pblapply(images, function(img) {
+      result <- as.data.table(countNA(img, subzones, landsat_no))
+      result[, landsat_number := landsat_no]
+      result
+    }))
+  }
+  
+  message("Processing images...")
+  ls7_results <- process_images(landsat7_images, 7)
+  ls8_results <- process_images(landsat8_images, 8)
+  
+  # Combine Results
+  all_results <- rbindlist(list(ls7_results, ls8_results), fill = TRUE)
+  
+  # Post-processing
+  if (nrow(all_results) > 0) {
+    all_results[, formatted_date := format(date, "%b %d, %Y")]
+    na_prob_distribution <- na_probdist(all_results)
+    
+    # Save results
+    saveRDS(all_results, output_all_results)
+    saveRDS(na_prob_distribution, output_na_prob_dist)
+    message("Results saved to cache.")
+  } else {
+    stop("No results generated - check input data")
+  }
+}
+
+# Show results
+message("\nCurrent results summary:")
+print(all_results[, .(mean_na = mean(na_count/total_pixels)), by = landsat_number])
+```
+
+
+```{r summary statistics for missing values:Changi}
+write.csv(all_results |>
+            filter(subzone == "CHANGI"), 
+          "../Data/Misc/CHANGI_NA_Results.csv", row.names = FALSE)
+
+# summary statistics for missing values for Changi
+changi_summary <- create_subzone_summary(all_results, "CHANGI")
+cat("\nSummary Statistics for CHANGI:\n")
+print(changi_summary)
+
+# probability distribution
+changi_prob_plot <- plot_na_probdist(na_prob_distribution, "CHANGI")
+print(changi_prob_plot)
+```
+
+To better understand the distribution of the NA values, we plot the following:
+
+```{r distribution of NA values}
+#| include: FALSE
+# this chunk is to write the functions for eda of missing values —————
+
+# function to create RDS images to create gif for NA values
+distributionNA <- function(img, subzone) {
+  date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"), format="%Y-%m-%d")
+  
+  # import subzone boundary 
+  boundary <- st_read("../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = T) |>
+    select(PLN_AREA_N, geometry) |>
+    filter(PLN_AREA_N == subzone) |>
+    st_union() |>
+    st_transform("EPSG:4326") |>
+    st_sf()
+  
+  # import image
+  r <- rast(img) |>
+    project("EPSG:4326") 
+  
+  # align to a common grid (using LST_Singapore_2013-04-24.tif as template)
+  template <- rast(paste0("../Data/Landsat/GEE_landsat8/LST_Singapore_2013-04-24.tif")) |> 
+    project("EPSG:4326")
+  r_aligned <- resample(r, template)
+  
+  # save the min. temp of region
+  min_temp <- global(terra::mask(r_aligned, vect(boundary)), fun = "min", na.rm = TRUE)[1,1] 
+  min_temp <- ifelse(min_temp <= 18 | is.na(min_temp), 19, min_temp) # to account for cases where temperatures are negative or extremely low
+  
+  # set NA values in image to be 0
+  r_aligned[is.na(r_aligned)] <- 0
+  
+  # mask & crop to subzone region
+  temp_boundary <- terra::mask(r_aligned, vect(boundary))
+  ext <- ext(boundary)
+  temp_boundary <- terra::crop(temp_boundary, ext) 
+  
+  # aggregate spatially to reduce the number of points
+  aggregated_temp_boundary <- temp_boundary |>
+    aggregate(fact = 10/3, fun = "mean", na.rm = T) 
+  
+  # temperature lower than min_temp -> set to 0 i.e. take it as missing data
+  aggregated_temp_boundary <- ifel(aggregated_temp_boundary$LST < min_temp, 0, aggregated_temp_boundary$LST)
+  
+  # extract as dataframe & set 0 values to be NA
+  df_boundary <- terra::as.data.frame(aggregated_temp_boundary, xy = TRUE, na.rm = TRUE) |>
+    mutate(LST = ifelse(LST == 0, NA, LST),
+           date = date)
+  
+  saveRDS(df_boundary, file = paste0("../Data/Misc/SavedRDS/", gsub("\\.tif$", "", basename(img)), ".RDS"))
+  print(paste0("Successfully extracted: ", basename(img)))
+}
+
+combine_distributionNA <- function(subzone, landsat_no) {
+  # list all pre-existing RDS files in the target directory
+  existing_rds <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
+  
+  # remove pre-existing RDS files if any exist
+  if(length(existing_rds) > 0) {
+    file.remove(existing_rds)
+  }
+  
+  # retrieve all tif files
+  ls_img <- list.files(paste0("../Data/Landsat/GEE_landsat", landsat_no), pattern = "\\.tif$", full.names = TRUE)
+  
+  # apply distributionNA function on all images
+  lapply(ls_img, function(img) distributionNA(img, subzone))
+  
+  # retrieve all imputed data files
+  rds_img <- list.files("../Data/Misc/SavedRDS", pattern = "\\.RDS$", full.names = TRUE)
+  rds_df_combined <- bind_rows(lapply(rds_img, readRDS))
+  
+  print(paste0("Data is combined! Ready for merging and plotting!"))
+  return(rds_df_combined)
+}
+
+# function to count NA values by region
+count_NA_region <- function(img, subzone) {
+  date <- as.Date(str_extract(img, "\\d{4}-\\d{2}-\\d{2}"), format="%Y-%m-%d")
+  
+  boundary <- st_read("../Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp", quiet = TRUE) |>
+    select(PLN_AREA_N, geometry) |>
+    filter(PLN_AREA_N == subzone) |>
+    st_union() |>
+    st_transform("EPSG:4326") |>
+    st_sf()
+  
+  centroid <- st_centroid(boundary)
+  x_mid <- st_coordinates(centroid)[1, 1]
+  y_mid <- st_coordinates(centroid)[1, 2]
+  
+  r <- rast(img) |>
+    project("EPSG:4326")
+  
+  template <- rast("../Data/Landsat/GEE_landsat8/LST_Singapore_2013-04-24.tif") |>
+    project("EPSG:4326")
+  r_aligned <- resample(r, template)
+  
+  min_temp <- global(terra::mask(r_aligned, vect(boundary)), fun = "min", na.rm = TRUE)[1, 1]
+  min_temp <- ifelse(min_temp <= 18 | is.na(min_temp), 19, min_temp)
+  r_aligned[is.na(r_aligned)] <- 0
+  
+  temp_boundary <- terra::mask(r_aligned, vect(boundary))
+  temp_boundary <- terra::crop(temp_boundary, ext(boundary))
+  
+  aggregated_temp_boundary <- temp_boundary |>
+    aggregate(fact = 10/3, fun = "mean", na.rm = TRUE)
+  
+  aggregated_temp_boundary <- ifel(aggregated_temp_boundary$LST < min_temp, 0, aggregated_temp_boundary$LST)
+  
+  df_boundary <- terra::as.data.frame(aggregated_temp_boundary, xy = TRUE, na.rm = TRUE) |>
+    mutate(LST = ifelse(LST == 0, NA, LST),
+           date = date)
+  
+  # Skip processing if there are no missing values
+  if (sum(is.na(df_boundary$LST)) == 0) {
+    cat(sprintf("No missing values found in %s for %s. Skipping...\n", basename(img), subzone))
+    return(NULL)  # Skip this image if no NA values
+  }
+  
+  na_regions <- df_boundary |>
+    filter(is.na(LST)) |>
+    mutate(region = case_when(
+      x < x_mid & abs(y - y_mid) <= (max(df_boundary$y, na.rm = TRUE) - min(df_boundary$y, na.rm = TRUE)) * 0.25 ~ "West",
+      x > x_mid & abs(y - y_mid) <= (max(df_boundary$y, na.rm = TRUE) - min(df_boundary$y, na.rm = TRUE)) * 0.25 ~ "East",
+      y > y_mid & abs(x - x_mid) <= (max(df_boundary$x, na.rm = TRUE) - min(df_boundary$x, na.rm = TRUE)) * 0.25 ~ "North",
+      y < y_mid & abs(x - x_mid) <= (max(df_boundary$x, na.rm = TRUE) - min(df_boundary$x, na.rm = TRUE)) * 0.25 ~ "South",
+      TRUE ~ "Central"
+    ))
+  
+  na_counts <- na_regions |>
+    group_by(region) |>
+    summarise(na_count = n()) |>
+    arrange(desc(na_count))
+  
+  # Handle case where na_counts is empty
+  if (nrow(na_counts) == 0) {
+    max_region <- "None"  # No missing data
+    na_counts <- data.frame(region = "None", na_count = 0)
+  } else {
+    max_region <- na_counts$region[which.max(na_counts$na_count)]
+  }
+  
+  results <- data.frame(subzone, date, image_name = basename(img), max_region, na_counts)
+  saveRDS(results, file = paste0("../Data/Misc/SavedRDS/", gsub("\\.tif$", "", basename(img)), ".RDS"))
+  
+  cat(sprintf("The maximum number of NA values is in the %s region.\n", max_region))
+}
+
+ls_img <- c(list.files(paste0("../Data/Landsat/GEE_landsat", 7), pattern = "\\.tif$", full.names = TRUE), 
+            list.files(paste0("../Data/Landsat/GEE_landsat", 8), pattern = "\\.tif$", full.names = TRUE))
+```
+
+
+```{r distribution of NA values :Changi, warning=FALSE,   echo=TRUE}
+
+subzone <- "CHANGI"
+cache_dir <- "../Data/Misc/SavedRDS"
+dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
+
+# Define cache files
+combined_cache <- file.path(cache_dir, "changi_combined_data.RDS")
+na_counts_cache <- file.path(cache_dir, "changi_na_counts.RDS")
+
+# Check if cached results exist
+if (file.exists(combined_cache) && file.exists(na_counts_cache)) {
+  message("Using the cached results.")
+  changi_NA <- readRDS(combined_cache)
+  rds_changi_combined <- readRDS(na_counts_cache)
+} else {
+  message("As no cached results found, processing data")
+  
+  # Process combined distributions
+  changi_NA7 <- combine_distributionNA(subzone, 7)
+  changi_NA8 <- combine_distributionNA(subzone, 8)
+  
+  changi_NA <- bind_rows(changi_NA7, changi_NA8) |>
+    group_by(x, y, date) |>
+    summarise(LST = mean(LST, na.rm = TRUE), .groups = "drop") |> 
+    mutate(missing = ifelse(is.na(LST), 1, 0))
+  
+  # Process NA counts
+  temp_rds_dir <- file.path(cache_dir, "temp")
+  dir.create(temp_rds_dir, showWarnings = FALSE)
+  
+  # Clear only temporary files, not the main cache
+  temp_files <- list.files(temp_rds_dir, full.names = TRUE)
+  if (length(temp_files) > 0) file.remove(temp_files)
+  
+  # Get image files
+  ls_img <- c(
+    list.files("../Data/Landsat/GEE_landsat7", "\\.tif$", full.names = TRUE),
+    list.files("../Data/Landsat/GEE_landsat8", "\\.tif$", full.names = TRUE)
+  )
+  
+  # Process with progress
+  pbapply::pblapply(ls_img, function(img) {
+    count_NA_region(img, subzone)
+  })
+  
+  # Combine results
+  rds_img <- list.files(temp_rds_dir, full.names = TRUE)
+  rds_changi_combined <- bind_rows(lapply(rds_img, readRDS))
+  
+  # Save to cache
+  saveRDS(changi_NA, combined_cache)
+  saveRDS(rds_changi_combined, na_counts_cache)
+  
+  # Clean up temp files
+  unlink(temp_rds_dir, recursive = TRUE)
+}
+
+# Verify results
+stopifnot("No results generated" = exists("changi_NA") && exists("rds_changi_combined"))
+```
+
+
+```{r Plotting NA values: Changi}
+#| fig.width: 10
+
+# Define the output GIF file path for CHANGI NA animation
+output_gif_changi_NA <- "../Data/Misc/gif/NA_animation_CHANGI.gif"
+
+
+
+# Check if the GIF file already exists
+if (!file.exists(output_gif_changi_NA)) {
+  gif_changi_NA <- py$create_na_animation(changi_NA, subzone = "CHANGI", value_df = rds_changi_combined, fps = 2, output_path = output_gif_changi_NA)
+  message(paste("NA animation for CHANGI saved to:", output_gif_changi_NA))
+} else {
+  message("NA animation for CHANGI already exists. Skipping generation.")
+  gif_changi_NA <- output_gif_changi_NA
+  
+  
+}
+
+include_graphics(gif_changi_NA)
+```
+
+#### Jurong East
+
+We will be focusing on the LST values in the blue border below:
+
+```{r}
+#| echo: FALSE
+#| fig.width: 10
+# this chunk is to plot jurong east —————
+
+subzone <- "JURONG EAST"
+
+# Plot Base Raster (Landsat Image)
+plot(r)
+
+# Overlay Boundary with Transparency
+plot(plot_boundary(subzone), add = TRUE,  col = rgb(0, 0, 1, alpha = 0.4))
+```
+
+First, we preprocessed our data using the following codes, and obtained a dataframe called `final_je_long`:
+
+```{r}
+#| results='hide'
+# this chunk is to pre-process Jurong East's landsat7 & landsat8 data and SAVE the result —————
+
+subzone <- "JURONG EAST"
+
+# Define file paths to save the processed data RELATIVE to the Rmd file
+output_file_long <- file.path("../Data/Final/final_jurong east_long.csv")
+output_file_wide <- file.path("../Data/Final/final_jurong east_wide.csv")
+
+# Check if the saved files already exist
+if (!file.exists(output_file_long) || !file.exists(output_file_wide)) {
+  message("Pre-processed data for JURONG EAST not found. Running preprocessing...")
+  # landsat 7
+  df_je7 <- combine_img(subzone, landsat_no = 7) # takes around 3-4 mins
+  rownames(df_je7) <- NULL
+
+  # landsat 8
+  df_je8 <- combine_img(subzone, landsat_no = 8)
+  rownames(df_je8) <- NULL
+
+  merged_je <- merge_ldst(df_je7, df_je8)
+
+  # aggregate temporally and obtain final data
+  final_je_long <- st_aggregate(merged_je, subzone)[[1]]
+  final_je_wide <- st_aggregate(merged_je, subzone)[[2]]
+
+  # Save the results to CSV files RELATIVE to the Rmd file
+  write.csv(final_je_long, output_file_long, row.names = FALSE)
+  write.csv(final_je_wide, output_file_wide, row.names = FALSE)
+  message("Pre-processed data for JURONG EAST saved to CSV files.")
+} else {
+  message("Pre-processed data for JURONG EAST already exists. Skipping preprocessing.")
+  # The data will be loaded in a subsequent chunk
+}
+```
+
+```{r}
+# this chunk is to LOAD the pre-processed Jurong East data —————
+
+output_file_long <- file.path("../Data/Final/final_jurong east_long.csv")
+
+if (file.exists(output_file_long)) {
+  final_je_long <- read.csv(output_file_long)
+  # Ensure 'date' column is treated as Date if it exists
+  if ("date" %in% colnames(final_je_long)) {
+    final_je_long$date <- as.Date(final_je_long$date)
+  }
+  print("Pre-processed JURONG EAST data loaded successfully.")
+} else {
+  print("Pre-processed JURONG EAST data file not found. Ensure the preprocessing chunk has been run at least once to save the data.")
+}
+```
+
+By using `final_je_long`, we can obtain the following EDA results:
+
+
+
+```{r}
+#| echo: FALSE
+#| fig.width: 10
+# this chunk is to conduct exploratory data analysis and save the animation if not generated else it skips the generation steps retrieves th existing from previous run—————
+
+# Ensure the 'eda' function is defined and sourced
+eda(final_je_long)
+
+# Define the output GIF file path
+output_gif_je <- ("../Data/Misc/gif/LST_animation_JURONG EAST.gif")
+
+# Check if the GIF file already exists
+if (!file.exists(output_gif_je)) {
+  message("Generating LST animation for JURONG EAST...")
+  gif_je <- py$create_lst_animation(final_je_long, subzone = "JURONG EAST", fps = 2, output_path = output_gif_je)
+  message(paste("LST animation saved to:", output_gif_je))
+} else {
+  message("LST animation for JURONG EAST already exists. Skipping generation.")
+  gif_je <- output_gif_je # Use the existing file path
+}
+
+include_graphics(gif_je)
+```
+
+
+To check how many NA values are present in each image, we can compute some summary statistics:
+
+```{r}
+write.csv(all_results |>
+            filter(subzone == "JURONG EAST"), 
+          "../Data/Misc/JURONG EAST_NA_Results.csv", row.names = FALSE)
+
+# summary statistics for missing values for Jurong East
+je_summary <- create_subzone_summary(all_results, "JURONG EAST")
+cat("\nSummary Statistics for JURONG EAST:\n")
+print(je_summary)
+
+# probability distribution
+je_prob_plot <- plot_na_probdist(na_prob_distribution, "JURONG EAST")
+print(je_prob_plot)
+```
+
+To better understand the distribution of the NA values, we plot the following:
+
+```{r}
+subzone <- "JURONG EAST"
+cache_dir <- "../Data/Misc/SavedRDS"
+dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
+
+# Define cache files
+combined_cache <- file.path(cache_dir, "je_combined_data.RDS")
+na_counts_cache <- file.path(cache_dir, "je_na_counts.RDS")
+
+# Check if cached results exist
+if (file.exists(combined_cache) && file.exists(na_counts_cache)) {
+  message("Using the cached results.")
+  je_NA <- readRDS(combined_cache)
+  rds_je_combined <- readRDS(na_counts_cache)
+} else {
+  message("As no cached results found, processing data")
+  
+  # Process combined distributions
+  je_NA7 <- combine_distributionNA(subzone, 7)
+  je_NA8 <- combine_distributionNA(subzone, 8)
+  
+  je_NA <- bind_rows(je_NA7, je_NA8) |>
+    group_by(x, y, date) |>
+    summarise(LST = mean(LST, na.rm = TRUE), .groups = "drop") |> 
+    mutate(missing = ifelse(is.na(LST), 1, 0))
+  
+  # Process NA counts
+  temp_rds_dir <- file.path(cache_dir, "temp")
+  dir.create(temp_rds_dir, showWarnings = FALSE)
+  
+  # Clear only temporary files, not the main cache
+  temp_files <- list.files(temp_rds_dir, full.names = TRUE)
+  if (length(temp_files) > 0) file.remove(temp_files)
+  
+  # Get image files
+  ls_img <- c(
+    list.files("../Data/Landsat/GEE_landsat7", "\\.tif$", full.names = TRUE),
+    list.files("../Data/Landsat/GEE_landsat8", "\\.tif$", full.names = TRUE)
+  )
+  
+  # Process with progress
+  pbapply::pblapply(ls_img, function(img) {
+    count_NA_region(img, subzone)
+  })
+  
+  # Combine results
+  rds_img <- list.files(temp_rds_dir, full.names = TRUE)
+  rds_je_combined <- bind_rows(lapply(rds_img, readRDS))
+  
+  # Save to cache
+  saveRDS(je_NA, combined_cache)
+  saveRDS(rds_je_combined, na_counts_cache)
+  
+  # Clean up temp files
+  unlink(temp_rds_dir, recursive = TRUE)
+}
+
+# Verify results
+stopifnot("No results generated" = exists("je_NA") && exists("rds_je_combined"))
+```
+
+```{r}
+#| fig.width: 10
+
+# Define the output GIF file path for JURONG EAST NA animation
+output_gif_je_NA <- "../Data/Misc/gif/NA_animation_JURONG EAST.gif"
+
+# To check if the GIF file already exists
+if (!file.exists(output_gif_je_NA)) {
+  gif_je_NA <- py$create_na_animation(je_NA, subzone = "JURONG EAST", value_df = rds_je_combined, fps = 2, output_path = output_gif_je_NA)
+  message(paste("NA animation for JURONG EAST saved to:", output_gif_je_NA))
+} else {
+  message("NA animation for JURONG EAST already exists. Skipping generation.")
+  gif_je_NA <- output_gif_je_NA
+}
+
+include_graphics(gif_je_NA)
+```
+
+#### Jurong West
+
+We will be focusing on the LST values in the blue border below:
+
+```{r}
+#| echo: FALSE
+#| fig.width: 10
+# this chunk is to plot jurong west —————
+
+subzone <- "JURONG WEST"
+
+plot(r)
+plot(plot_boundary(subzone), add = TRUE,  col = rgb(0, 0, 1, alpha = 0.4))
+```
+
+First, we preprocessed our data using the following codes, and obtained a dataframe called `final_jw_long`:
+
+```{r, results='hide'}
+# this chunk is to pre-process jurong west's landsat7 & landsat8 data
+
+subzone <- "JURONG WEST"
+
+# Define file paths to save the processed data RELATIVE to the Rmd file
+output_file_long <- file.path("../Data/Final/final_jurong west_long.csv")
+output_file_wide <- file.path("../Data/Final/final_jurong west_wide.csv")
+
+# Check if the saved files already exist
+if (!file.exists(output_file_long) || !file.exists(output_file_wide)) {
+  message("Pre-processed data for JURONG WEST not found. Running preprocessing")
+  # landsat 7
+  df_jw7 <- combine_img(subzone, landsat_no = 7) # takes around 3-4 mins
+  rownames(df_jw7) <- NULL
+
+  # landsat 8
+  df_jw8 <- combine_img(subzone, landsat_no = 8)
+  rownames(df_jw8) <- NULL
+
+  merged_jw <- merge_ldst(df_jw7, df_jw8)
+
+  # aggregate temporally and obtain final data
+  final_jw_long <- st_aggregate(merged_jw, subzone)[[1]]
+  final_jw_wide <- st_aggregate(merged_jw, subzone)[[2]]
+
+  # Save the results to CSV files RELATIVE to the Rmd file
+  write.csv(final_jw_long, output_file_long, row.names = FALSE)
+  write.csv(final_jw_wide, output_file_wide, row.names = FALSE)
+  message("Pre-processed data for JURONG WEST saved to CSV files.")
+} else {
+  message("Pre-processed data for JURONG WEST already exists. Skipping preprocessing.")
+  # The data will be loaded in a subsequent chunk
+}
+```
+
+```{r}
+# this chunk is to LOAD the pre-processed Jurong West data —————
+
+output_file_long <- file.path("../Data/Final/final_jurong west_long.csv")
+
+if (file.exists(output_file_long)) {
+  final_jw_long <- read.csv(output_file_long)
+  # Ensure 'date' column is treated as Date if it exists
+  if ("date" %in% colnames(final_jw_long)) {
+    final_jw_long$date <- as.Date(final_jw_long$date)
+  }
+  print("Pre-processed JURONG WEST data loaded successfully.")
+} else {
+  print("Pre-processed JURONG WEST data file not found. Ensure the preprocessing chunk has been run at least once to save the data.")
+}
+```
+
+
+By using `final_jw_long`, we can see how the LST values changes over time:
+
+```{r}
+#| echo: FALSE
+#| fig.width: 10
+# this chunk is to conduct exploratory data analysis —————
+
+# Ensure the 'eda' function is defined and sourced
+eda(final_jw_long)
+
+# Define the output GIF file path
+output_gif_jw <- ("../Data/Misc/gif/LST_animation_JURONG WEST.gif")
+
+# Check if the GIF file already exists
+if (!file.exists(output_gif_jw)) {
+  message("Generating LST animation for JURONG WEST...")
+  gif_jw <- py$create_lst_animation(final_jw_long, subzone = "JURONG WEST", fps = 2, output_path = output_gif_jw)
+  message(paste("LST animation saved to:", output_gif_jw))
+} else {
+  message("LST animation for JURONG WEST already exists. Skipping generation.")
+  gif_jw <- output_gif_jw # Use the existing file path
+}
+
+include_graphics(gif_jw)
+
+```
+
+To check how many NA values are present in each image, we can compute some summary statistics:
+
+```{r}
+write.csv(all_results |>
+            filter(subzone == "JURONG WEST"), 
+          "../Data/Misc/JURONG WEST_NA_Results.csv", row.names = FALSE)
+
+# summary statistics for missing values for Jurong West
+jw_summary <- create_subzone_summary(all_results, "JURONG WEST")
+cat("\nSummary Statistics for JURONG WEST:\n")
+print(jw_summary)
+
+# probability distribution
+jw_prob_plot <- plot_na_probdist(na_prob_distribution, "JURONG WEST")
+print(jw_prob_plot)
+```
+
+To better understand the distribution of the NA values, we plot the following:
+
+```{r, results='hide'}
+subzone <- "JURONG WEST"
+cache_dir <- "../Data/Misc/SavedRDS"
+dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
+
+# Define cache files
+combined_cache <- file.path(cache_dir, "jw_combined_data.RDS")
+na_counts_cache <- file.path(cache_dir, "jw_na_counts.RDS")
+
+# Check if cached results exist
+if (file.exists(combined_cache) && file.exists(na_counts_cache)) {
+  message("Using the cached results.")
+  jw_NA <- readRDS(combined_cache)
+  rds_jw_combined <- readRDS(na_counts_cache)
+} else {
+  message("As no cached results found, processing data")
+  
+  # Process combined distributions
+  jw_NA7 <- combine_distributionNA(subzone, 7)
+  jw_NA8 <- combine_distributionNA(subzone, 8)
+  
+  jw_NA <- bind_rows(jw_NA7, jw_NA8) |>
+    group_by(x, y, date) |>
+    summarise(LST = mean(LST, na.rm = TRUE), .groups = "drop") |> 
+    mutate(missing = ifelse(is.na(LST), 1, 0))
+  
+  # Process NA counts
+  temp_rds_dir <- file.path(cache_dir, "temp")
+  dir.create(temp_rds_dir, showWarnings = FALSE)
+  
+  # Clear only temporary files, not the main cache
+  temp_files <- list.files(temp_rds_dir, full.names = TRUE)
+  if (length(temp_files) > 0) file.remove(temp_files)
+  
+  # Get image files
+  ls_img <- c(
+    list.files("../Data/Landsat/GEE_landsat7", "\\.tif$", full.names = TRUE),
+    list.files("../Data/Landsat/GEE_landsat8", "\\.tif$", full.names = TRUE)
+  )
+  
+  # Process with progress
+  pbapply::pblapply(ls_img, function(img) {
+    count_NA_region(img, subzone)
+  })
+  
+  # Combine results
+  rds_img <- list.files(temp_rds_dir, full.names = TRUE)
+  rds_jw_combined <- bind_rows(lapply(rds_img, readRDS))
+  
+  # Save to cache
+  saveRDS(jw_NA, combined_cache)
+  saveRDS(rds_jw_combined, na_counts_cache)
+  
+  # Clean up temp files
+  unlink(temp_rds_dir, recursive = TRUE)
+}
+
+# Verify results
+stopifnot("No results generated" = exists("jw_NA") && exists("rds_jw_combined"))
+```
+
+```{r}
+#| fig.width: 10
+
+# Define the output GIF file path for JURONG WEST NA animation
+output_gif_jw_NA <- "../Data/Misc/gif/NA_animation_JURONG WEST.gif"
+
+# To check if the GIF file already exists
+if (!file.exists(output_gif_jw_NA)) {
+  gif_jw_NA <- py$create_na_animation(jw_NA, subzone = "JURONG WEST", value_df = rds_jw_combined, fps = 2, output_path = output_gif_jw_NA)
+  message(paste("NA animation for JURONG WEST saved to:", output_gif_jw_NA))
+} else {
+  message("NA animation for JURONG WEST already exists. Skipping generation.")
+  gif_jw_NA <- output_gif_jw_NA
+}
+
+include_graphics(gif_jw_NA)
+```
+```

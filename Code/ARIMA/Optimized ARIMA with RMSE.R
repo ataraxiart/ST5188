@@ -1,16 +1,7 @@
 #Changi
 
-library(dplyr)
-library(readr)
-library(tidyr)
-library(forecast)
-library(urca)
-library(ggplot2)
-library(cluster)
-library(lubridate)
-
-train_C <- read_csv("../../Data/Final/Imputation/imp_train_set.csv")
-test_C <- read_csv("../../Data/Final/Imputation/imp_test_set.csv")
+train_C <- read_csv(here("Data/Final/Imputation/imp_train_set.csv"))
+test_C <- read_csv(here("Data/Final/Imputation/imp_test_set.csv"))
 
 # Create a Unique Point Identifier
 train_Changi <- train_C %>%
@@ -89,11 +80,13 @@ for (point in sampled_points) {
     arrange(Date)
   
   ts_train_data <- ts(point_data$Value,
-                      start = c(year(min(point_data$Date)), month(min(point_data$Date))),
+                      start = c(year(min(point_data$Date)), 
+                                month(min(point_data$Date))),
                       frequency = 6)
   
   ts_test_data <- ts(test_point_data$Value,
-                     start = c(year(min(test_point_data$Date)), month(min(test_point_data$Date))),
+                     start = c(year(min(test_point_data$Date)), 
+                               month(min(test_point_data$Date))),
                      frequency = 6)
   
   best_rmse <- Inf
@@ -115,7 +108,8 @@ for (point in sampled_points) {
             for (sq in seasonal_q_values) {
               # Fit the ARIMA model with the grid parameters
               model <- tryCatch({
-                arima(ts_train_data, order = c(p, d, q), seasonal = list(order = c(sp, sd, sq), period = 6))
+                arima(ts_train_data, order = c(p, d, q), 
+                      seasonal = list(order = c(sp, sd, sq), period = 6))
               }, error = function(e) NULL)
               
               if (!is.null(model)) {

@@ -1,12 +1,5 @@
-process_neighborhood <- function(neighborhood, train_file, test_file, n_points = 10, seed = 5188) {
-  library(dplyr)
-  library(readr)
-  library(tidyr)
-  library(forecast)
-  library(urca)
-  library(ggplot2)
-  library(cluster)
-  library(lubridate)
+process_neighborhood <- function(neighborhood, train_file, test_file,
+                                 n_points = 10, seed = 5188) {
   
   cat("\nProcessing Neighborhood:", neighborhood, "\n")
   
@@ -63,7 +56,8 @@ process_neighborhood <- function(neighborhood, train_file, test_file, n_points =
                   start = c(year(min(point_data$Date)),
                             month(min(point_data$Date))),
                   frequency = 6)
-    model <- arima(ts_data, order = c(0, 1, 1), seasonal = list(order = c(1, 0, 1), period = 6))
+    model <- arima(ts_data, order = c(0, 1, 1), 
+                   seasonal = list(order = c(1, 0, 1), period = 6))
     arima_models[[point]] <- model
     cat("\nARIMA Model for Point:", point, "\n")
     print(summary(model))
@@ -99,23 +93,25 @@ process_neighborhood <- function(neighborhood, train_file, test_file, n_points =
   return(forecast_results)
 }
 
+
+
 # Changi
 forecast_results_changi <- process_neighborhood(
   neighborhood = "Changi",
-  train_file = "../../Data/Final/Imputation/imp_train_set.csv",
-  test_file = "../../Data/Final/Imputation/imp_test_set.csv"
+  train_file = here("Data", "Final", "Imputation", "imp_train_set.csv"),
+  test_file = here("Data", "Final", "Imputation", "imp_test_set.csv")
 )
 
 # Jurong East
 forecast_results_jurong_east <- process_neighborhood(
   neighborhood = "Jurong East",
-  train_file = "../../Data/Final/TT Split/je_train_long.csv",
-  test_file = "../../Data/Final/TT Split/je_test_long.csv"
+  train_file = here("Data", "Final", "TT Split", "je_train_long.csv"),
+  test_file = here("Data", "Final", "TT Split", "je_test_long.csv")
 )
 
 # Jurong West
 forecast_results_jurong_west <- process_neighborhood(
   neighborhood = "Jurong West",
-  train_file = "../../Data/Final/TT Split/jw_train_long.csv",
-  test_file = "../../Data/Final/TT Split/jw_test_long.csv"
+  train_file = here("Data", "Final", "TT Split", "jw_train_long.csv"),
+  test_file = here("Data", "Final", "TT Split", "jw_test_long.csv")
 )
