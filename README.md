@@ -64,39 +64,49 @@ Baseline models like ARIMA, LSTMs and Gaussian Process is performed
 
 -   **R (Version 4.4.1)**:
 
-    | Packages | Version | Comments |
-    |----|----|----|
-    | `terra` | 1.8.21 | Manipulating spatial data in raster and vector data types |
-    | `sf` | 1.0-16 | Encoding and analysing spatial data |
-    | `dplyr` | 1.1.4 | Simplifies data manipulation |
-    | `data.table` | 1.16.0 | Aggregating large datasets |
-    | `pbapply` | 1.7-2 | For progress bar |
-    | `reticulate` | 1.41.0 | To convert .ipnyb files to .py format |
+    +----------------------+----------------------+-----------------------------------------------------------+
+    | Packages             | Version              | Comments                                                  |
+    +======================+======================+===========================================================+
+    | `terra`              | 1.8.21               | Manipulating spatial data in raster and vector data types |
+    +----------------------+----------------------+-----------------------------------------------------------+
+    | `sf`                 | 1.0-16               | Encoding and analysing spatial data                       |
+    +----------------------+----------------------+-----------------------------------------------------------+
+    | `dplyr`              | 1.1.4                | Simplifies data manipulation                              |
+    +----------------------+----------------------+-----------------------------------------------------------+
+    | `data.table`         | 1.16.0               | Aggregating large datasets                                |
+    +----------------------+----------------------+-----------------------------------------------------------+
+    | `pbapply`            | 1.7-2                | For progress bar                                          |
+    +----------------------+----------------------+-----------------------------------------------------------+
+    | `reticulate`         | 1.41.0               | To convert .ipnyb files to .py format                     |
+    +----------------------+----------------------+-----------------------------------------------------------+
 
 -   **Python (Version 3.9.6)**-For Python script [`create_lst_animation.py`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/create_lst_animation.py)
 
-    +--------------+----------+-----------------------------------------------------------------+------------------------------------+
-    | Packages     | Version  | Comments                                                        | Key classes                        |
-    +==============+==========+=================================================================+====================================+
-    | `matplotlib` | 3.9.4    | For creating plots and animations.                              | -   pyplot                         |
-    |              |          |                                                                 |                                    |
-    |              |          |                                                                 | -   colors.LinearSegmentedColormap |
-    |              |          |                                                                 |                                    |
-    |              |          |                                                                 | -   patches                        |
-    +--------------+----------+-----------------------------------------------------------------+------------------------------------+
-    | `numpy`      | 1.26.4   | For numerical operations, like handling arrays of image data    | \-                                 |
-    +--------------+----------+-----------------------------------------------------------------+------------------------------------+
-    | `os`         | built in | for interacting with operating system, like handling file paths | \-                                 |
-    +--------------+----------+-----------------------------------------------------------------+------------------------------------+
-    | `imageio`    | 2.37.0   | For reading and writing image files essential for animated GIFs | \-                                 |
-    +--------------+----------+-----------------------------------------------------------------+------------------------------------+
+    +--------------+-----------+-----------------------------------------------------------------+----------------------------------------------------------+
+    | Packages     | Version   | Comments                                                        | Key classes                                              |
+    +==============+===========+=================================================================+==========================================================+
+    | `matplotlib` | 3.9.4     | For creating plots and animations.                              | -   pyplot                                               |
+    |              |           |                                                                 |                                                          |
+    |              |           |                                                                 | -   colors.LinearSegmentedColormap                       |
+    |              |           |                                                                 |                                                          |
+    |              |           |                                                                 | -   patches                                              |
+    +--------------+-----------+-----------------------------------------------------------------+----------------------------------------------------------+
+    | `numpy`      | 1.26.4    | For numerical operations, like handling arrays of image data    | \-                                                       |
+    +--------------+-----------+-----------------------------------------------------------------+----------------------------------------------------------+
+    | `os`         | built in  | for interacting with operating system, like handling file paths | \-                                                       |
+    +--------------+-----------+-----------------------------------------------------------------+----------------------------------------------------------+
+    | `imageio`    | 2.37.0    | For reading and writing image files essential for animated GIFs | \-                                                       |
+    +--------------+-----------+-----------------------------------------------------------------+----------------------------------------------------------+
 
     For [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/Preprocessing/create_na_animation.py),it depends on additionally these 2 libraries:
 
-    | Packages | Version | Comments |
-    |----|----|----|
-    | `geopandas` | 1.0.1 | For geospatial vector data (like shapefiles or GeoJSON) which extends functionality of pandas to handle geographic data |
-    | `pandas` | \>=1.4.0 | Fundamental library for data manipulation and analysis providing data structures like Data Frames and Series,essential for working with tabular data |
+    +----------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
+    | Packages             | Version              | Comments                                                                                                                                             |
+    +======================+======================+======================================================================================================================================================+
+    | `geopandas`          | 1.0.1                | For geospatial vector data (like shapefiles or GeoJSON) which extends functionality of pandas to handle geographic data                              |
+    +----------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
+    | `pandas`             | \>=1.4.0             | Fundamental library for data manipulation and analysis providing data structures like Data Frames and Series,essential for working with tabular data |
+    +----------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ------------------------------------------------------------------------
 
@@ -170,7 +180,7 @@ Baseline models like ARIMA, LSTMs and Gaussian Process is performed
     -   **With dropout**- Randomly deactivates neurons during training to prevent overfitting and improve generalization to new data.
 -   **Training loop**: It is the model's learning phase where it refines predictions over 100 tries (epochs), using Adam optimization to minimize its mistakes, and shows progress every 10 tries.
 
-### For Code Reproducability:
+### For Code Reproducibility:
 
 [LSTM without sliding window.ipynb](https://github.com/ataraxiart/ST5188/blob/6dcff65326979106e7bccc3ff97c09c62da37469/Code/LSTMs/Without%20rolling%20window/LSTM%20without%20sliding%20window.ipynb)
 
@@ -227,7 +237,7 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 -   **Metrics**: RMSE at 1st, 3rd, 6th, 9th, 12th steps and overall.
 
-### For Code Reproducability:
+### For Code Reproducibility:
 
 -   [lstm w window = 9.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%209.ipynb)
 
@@ -275,7 +285,7 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 -   With Dropout: `rmse_dropout_9.csv`, `rmse_dropout_10.csv`, ..., `rmse_dropout_13.csv`
 
-### For Code Reproducability:
+### For Code Reproducibility:
 
 [code to merge merge the rmse stats](https://github.com/ataraxiart/ST5188/blob/80c76fe6abc5eccbad0ca3edb13266603fb7df4f/Code/LSTMs/With%20rolling%20window/code%20to%20merge%20the%20rmse%20stats.ipynb)
 
