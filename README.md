@@ -102,7 +102,7 @@ More details about the Bayesian GP Model can be found here:
 
 ## Baseline Models
 
-### Autoregressive Integrated Moving Average (ARIMA)
+### Autoregressive Integrated Moving Average (ARIMA) [Code/ARIMA/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Final/ARIMA)
 
 ### Data Source: [Data/Final/Imputation](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation)
 
@@ -151,9 +151,10 @@ More details about the Bayesian GP Model can be found here:
     | `here`      | 1.0.1   |                                |
     | `tibble`    | 3.2.1   |                                |
 
-### LSTMs
+### LSTMs [Code/LSTM/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Final/LSTM)
 
-### \>Without Sliding Window [Code/LSTM/Without rolling window] (https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/Without_rolling_window)
+
+### \>Without Sliding Window [Code/LSTM/Without rolling window/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/Without_rolling_window)
 
 ### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation)
 
@@ -184,7 +185,7 @@ More details about the Bayesian GP Model can be found here:
     | `pandas`  | 2.0.3   |
     | `numPy`   | 1.23.5  |
 
-### \>With Rolling Windows [Code/LSTM/With rolling window](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/With_rolling_window)
+### \>With Rolling Windows [Code/LSTM/With rolling window/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/With_rolling_window)
 
 In this LSTM is evaluated by using different historical window sizes (9 to 13 years) for forecasting Land Surface Temperature (LST) 2 years ahead (12 bimonthly steps). Each window size is tested with and without dropout regularization.
 
