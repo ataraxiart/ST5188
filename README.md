@@ -20,51 +20,51 @@ More details about the Bayesian GP Model can be found here:
 
 ### Satellite Data
 
-[Data/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data "5188-Satellite Data") directory contains the raw data and intermediate processed files.
+[Data/](https://github.com/ataraxiart/ST5188/tree/main/Data) directory contains the raw data and preprocessed files.
 
 -   Landsat Satellite Images:
 
-    -   [Data/Landsat/GEE_Landsat7](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Landsat/GEE_landsat7):Landsat 7 satellite images (TIF files)
+    -   [Data/Landsat/GEE_Landsat7](https://github.com/ataraxiart/ST5188/tree/main/Data/Landsat/GEE_landsat7):Landsat 7 satellite images (TIF files)
 
-    -   [Data/Landsat/GEE_Landsat8](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Landsat/GEE_landsat8): Landsat 8 satellite images (TIF files)
+    -   [Data/Landsat/GEE_Landsat8](https://github.com/ataraxiart/ST5188/tree/main/Data/Landsat/GEE_landsat8): Landsat 8 satellite images (TIF files)
 
 -   Shape file:
 
-    -   [Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp): Shape file (More accurately, collection of files) containing the boundaries of Singapore's subzones.
+    -   [Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp](https://github.com/ataraxiart/ST5188/tree/main/Data/Misc/Subzone): Shape file (More accurately, collection of files) containing the boundaries of Singapore's subzones.
 
 -   Summary statistics of (missing values):
 
-    -   [Data/Misc/CHANGI_NA_Results.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Misc/CHANGI_NA_Results.csv)
+    -   [Data/Misc/CHANGI_NA_Results.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Misc/CHANGI_NA_Results.csv)
 
-    -   [Data/Misc/JURONG EAST_NA_Results.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Misc/JURONG%20EAST_NA_Results.csv)
+    -   [Data/Misc/JURONG EAST_NA_Results.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Misc/JURONG_EAST_NA_Results.csv)
 
-    -   [Data/Misc/JURONG WEST_NA_Results.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Misc/JURONG%20WEST_NA_Results.csv)
+    -   [Data/Misc/JURONG WEST_NA_Results.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Misc/JURONG_WEST_NA_Results.csv)
 
 -   intermediate RDS Cache
 
-    -   [Misc/SavedRDS/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Misc/SavedRDS): Directory to store intermediate RDS files during processing
+    -   [Misc/SavedRDS/](https://github.com/ataraxiart/ST5188/tree/main/Data/Misc/SavedRDS): Directory to store intermediate RDS files during processing
 
 ------------------------------------------------------------------------
 
-### Preprocessing & Explanatory Data Analysis: [Code/Preprocessing/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing)
+### Preprocessing & Explanatory Data Analysis: [Code/Preprocessing/](https://github.com/ataraxiart/ST5188/tree/main/Code/Preprocessing)
 
--   [Code/Preprocessing/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing): This directory contains the R and Python scripts used for data preprocessing and EDA.
+-   [Code/Preprocessing/](https://github.com/ataraxiart/ST5188/tree/main/Code/Preprocessing): This directory contains the R and Python scripts used for data preprocessing and EDA.
 
-    -   [`load_libraries.R`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/load_libraries.R): Loads necessary R libraries for data manipulation, spatial analysis, and plotting.
-    -   [`combine_img.R`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/combine_img.R): It allows automation of reading multiple satellite images, extracts and imputs LST data for a specific area, and merges this data into a single, manageable data frame for further analysis. It allows applying [`extract_impute`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/extract_impute.R) on all images.
-    -   [`extract_impute.R`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/extract_impute.R): It takes raw images focuses on a subzone, aligns the LST data to a common grid. It also handles the temperatures which are negative or even extremely low, followed by imputing any missing values. It also skips images where LST data is completely missing.
-    -   [`impute_img.R`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/impute_img.R): Imputes missing LST values within images using spatial KNN method.
-    -   [`merged_ldst.R`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/merged_ldst.R): Merges LST data extracted from different satellite sources -Landsat 7 and 8.
-    -   [`st_aggregate.R`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/st_aggregate.R): Aggregates the data over time, here bi-monthly period yearly, for every spatial location. The data is also processed into long format and wide format.
-    -   [`create_lst_animation.py`](create_lst_animation.py): This is a Python script used to generate animated GIFs showing the temporal changes in LST for a given subzone.
-    -   [`eda.R`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/eda.R): This does not only generate summary statistics but also distribution of LST, variation across different periods, LST average over time, spatial distribution and temporal dependencies and plots for LST data.
-    -   [`count_NA.R`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/count_NA.R): Analyses the images individually to determine the amount of missing Land Surface Temperature (LST) data (in terms of pixel count and percentage) for the specified subzone within that image.
-    -   [`distribution_NA.R`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/distribution_NA.R): Here it tries to pinpoint exactly where within the subzone missing data is most concentrated. This is achieved by dividing the subzone into broad geographic areas and counting the NAs in each of those areas.
-    -   [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/create_na_animation.py): This shows the visualisation of missing data over time each specified region.
+    -   [`load_libraries.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/load_libraries.R): Loads necessary R libraries for data manipulation, spatial analysis, and plotting.
+    -   [`combine_img.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/combine_img.R): It allows automation of reading multiple satellite images, extracts and imputs LST data for a specific area, and merges this data into a single, manageable data frame for further analysis. It allows applying [`extract_impute`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/extract_impute.R) on all images.
+    -   [`extract_impute.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/extract_impute.R): It takes raw images focuses on a subzone, aligns the LST data to a common grid. It also handles the temperatures which are negative or even extremely low, followed by imputing any missing values. It also skips images where LST data is completely missing.
+    -   [`impute_img.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/impute_img.R): Imputes missing LST values within images using spatial KNN method.
+    -   [`merged_ldst.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/merged_ldst.R): Merges LST data extracted from different satellite sources -Landsat 7 and 8.
+    -   [`st_aggregate.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/st_aggregate.R): Aggregates the data over time, here bi-monthly period yearly, for every spatial location. The data is also processed into long format and wide format.
+    -   [`create_lst_animation.py`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/create_lst_animation.py): This is a Python script used to generate animated GIFs showing the temporal changes in LST for a given subzone.
+    -   [`eda.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/eda.R): This does not only generate summary statistics but also distribution of LST, variation across different periods, LST average over time, spatial distribution and temporal dependencies and plots for LST data.
+    -   [`count_NA.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/count_NA.R): Analyses the images individually to determine the amount of missing Land Surface Temperature (LST) data (in terms of pixel count and percentage) for the specified subzone within that image.
+    -   [`distribution_NA.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/distribution_NA.R): Here it tries to pinpoint exactly where within the subzone missing data is most concentrated. This is achieved by dividing the subzone into broad geographic areas and counting the NAs in each of those areas.
+    -   [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/create_na_animation.py): This shows the visualisation of missing data over time each specified region.
 
     ### For Code Reproducibility:
 
-    Knit [preprocess_main.rmd](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/preprocess_main.rmd)
+    Knit [preprocess_main.rmd](https://github.com/ataraxiart/ST5188/blob/main/Code/preprocess_main.rmd)
 
     ### Dependencies
 
@@ -80,7 +80,7 @@ More details about the Bayesian GP Model can be found here:
 | `reticulate`  | 1.41.0   | To convert `.ipynb` files to `.py` format                 |
 
 
--   **Python (Version 3.9.6)**-For Python script [`create_lst_animation.py`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/create_lst_animation.py)
+-   **Python (Version 3.9.6)**-For Python script [`create_lst_animation.py`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/create_lst_animation.py)
 
 | Packages     | Version   | Comments                                                        | Key Classes                                      |
 |--------------|-----------|------------------------------------------------------------------|--------------------------------------------------|
@@ -90,7 +90,7 @@ More details about the Bayesian GP Model can be found here:
 | `imageio`    | 2.37.0    | For reading and writing image files essential for animated GIFs | —                                                |
 
 
-- For [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/Preprocessing/create_na_animation.py),it depends on additionally these 2 libraries:
+- For [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/create_na_animation.py),it depends on additionally these 2 libraries:
 
 | Packages     | Version   | Comments                                                                                                                                      |
 |--------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------|
@@ -102,37 +102,37 @@ More details about the Bayesian GP Model can be found here:
 
 ## Baseline Models
 
-### Autoregressive Integrated Moving Average (ARIMA): [Code/ARIMA/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA)
+### Autoregressive Integrated Moving Average (ARIMA): [Code/ARIMA/](https://github.com/ataraxiart/ST5188/tree/main/Code/ARIMA)
 
-### Data Source: [Data/Final/Imputation](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation)
+### Data Source: [Data/Final/Imputation](https://github.com/ataraxiart/ST5188/tree/main/Data/Final/Imputation)
 
--   [imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation/imp_train_set.csv): Training dataset
+-   [imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/imp_train_set.csv): Training dataset
 
--   [imp_test_set.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation/imp_test_set.csv): Testing dataset
+-   [imp_test_set.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/imp_test_set.csv): Testing dataset
 
 ### Scripts:
 
--   [changi_imputed_and_restructured.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/CHANGI%20IMPUTED%20DATA%20RESTRUCTURE.R) :Restructures imputed Land Surface Temperature data into a complete data format with consistent formatting and no missing location data combinations.
+-   [changi_imputed_and_restructured.R](https://github.com/ataraxiart/ST5188/blob/main/Code/ARIMA/changi_imputed_and_restructured.R) :Restructures imputed Land Surface Temperature data into a complete data format with consistent formatting and no missing location data combinations.
 
--   [unoptimized_ARIMA.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/unoptimized%20ARIMA.R): to handle basic spatio temporal forecasting for temperature data across geographic points.
+-   [unoptimized_ARIMA.R](https://github.com/ataraxiart/ST5188/blob/main/Code/ARIMA/unoptimized_ARIMA.R): to handle basic spatio temporal forecasting for temperature data across geographic points.
 
     -   `process_neighborhood()`: Main function for training and forecasting per location
 
     -   `convert_period_to_date()`: Converts period in string format to `Date` as objects.
 
--   [optimized_ARIMA.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/optimized%20ARIMA.R): Automates optimized ARIMA modeling for 30 geographic points also generating seasonally adjusted temperature forecasts with accuracy metrics
+-   [optimized_ARIMA.R](https://github.com/ataraxiart/ST5188/blob/main/Code/ARIMA/optimized_ARIMA.R): Automates optimized ARIMA modeling for 30 geographic points also generating seasonally adjusted temperature forecasts with accuracy metrics
 
     -   `calculate_rmse()`: Calculates the Root Mean Squared Error (RMSE) values using the observed and forecasted value.
 
     -   Grid Search loop: Tests best ARIMA order point by iterating over each point and returning the RMSE value.
 
--   [optimized_ARIMA_with_RMSE.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/Optimized%20ARIMA%20with%20RMSE.R) : Model is evaluated and compared by having primary output as RMSE matrices across horizons
+-   [optimized_ARIMA_with_RMSE.R](https://github.com/ataraxiart/ST5188/blob/main/Code/ARIMA/optimized_ARIMA_with_RMSE.R) : Model is evaluated and compared by having primary output as RMSE matrices across horizons
 
--   [rolling_window_and_RMSE.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/Rolling%20window%20and%20RMSE.R): Implements time-based cross validation by testing models on multiple training windows (9-13 years) by taking 10 random samples per window. It also calculates RMSE for each forecast horizon (1/3/9/12 months) across all 30 points.
+-   [rolling_window_and_RMSE.R](https://github.com/ataraxiart/ST5188/blob/main/Code/ARIMA/rolling_window_and_RMSE.R): Implements time-based cross validation by testing models on multiple training windows (9-13 years) by taking 10 random samples per window. It also calculates RMSE for each forecast horizon (1/3/9/12 months) across all 30 points.
 
     ### For Code Reproducibility:
 
-    [run_ARIMA.R](https://github.com/ataraxiart/ST5188/blob/0b034138d2feb9137eda013210dd461794bfdcfc/Code/ARIMA/Run_ARIMA.R): Master file to execute the scripts for ARIMA portion
+    [run_ARIMA.R](https://github.com/ataraxiart/ST5188/blob/main/Code/ARIMA/run_ARIMA.R): Master file to execute the scripts for ARIMA portion
 
     ### Dependencies:
 
@@ -151,16 +151,16 @@ More details about the Bayesian GP Model can be found here:
     | `here`      | 1.0.1   |                                |
     | `tibble`    | 3.2.1   |                                |
 
-### LSTMs: [Code/LSTM/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Final/LSTM)
+### LSTMs: [Code/LSTMs/](https://github.com/ataraxiart/ST5188/tree/main/Code/LSTMs)
 
 
-### \>Without Sliding Window: [Code/LSTM/Without rolling window/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/Without_rolling_window)
+### \>Without Sliding Window: [Code/LSTMs/Without rolling window/](https://github.com/ataraxiart/ST5188/tree/main/Code/LSTMs/With%20rolling%20window)
 
-### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation)
+### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/main/Data/Final/)
 
--   [Imputation/imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation/imp_train_set.csv): True values (`changi_df`)
+-   [Imputation/imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/imp_train_set.csv): True values (`changi_df`)
 
--   [TT Split/changi_test_long.csv](https://github.com/ataraxiart/ST5188/blob/6dcff65326979106e7bccc3ff97c09c62da37469/Data/Final/TT%20Split/changi_test_long.csv): Predicted values (`pred_df`)
+-   [TT Split/changi_test_long.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/TT%20Split/changi_test_long.csv): Predicted values (`pred_df`)
 
 ### Custom Functions created:
 
@@ -173,7 +173,7 @@ More details about the Bayesian GP Model can be found here:
 
 ### For Code Reproducibility:
 
-[LSTM_without_sliding_window.ipynb](https://github.com/ataraxiart/ST5188/blob/6dcff65326979106e7bccc3ff97c09c62da37469/Code/LSTMs/Without%20rolling%20window/LSTM%20without%20sliding%20window.ipynb)
+[LSTM_without_sliding_window.ipynb](https://github.com/ataraxiart/ST5188/blob/main/Code/LSTMs/Without%20rolling%20window/LSTM_without_sliding_window.ipynb)
 
 ### Dependencies
 
@@ -185,13 +185,13 @@ More details about the Bayesian GP Model can be found here:
     | `pandas`  | 2.0.3   |
     | `numPy`   | 1.23.5  |
 
-### \>With Rolling Window: [Code/LSTM/With rolling window/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/With_rolling_window)
+### \>With Rolling Window: [Code/LSTMs/With rolling window/](https://github.com/ataraxiart/ST5188/tree/main/Code/LSTMs/With%20rolling%20window)
 
 In this LSTM is evaluated by using different historical window sizes (9 to 13 years) for forecasting Land Surface Temperature (LST) 2 years ahead (12 bimonthly steps). Each window size is tested with and without dropout regularization.
 
-### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation)
+### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/main/Data/Final/)
 
--   [Imputation/changi_imp_final.csv](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Data/Final/Imputation/changi_imp_final.csv) :Bimonthly LST values for Changi, Singapore, 2000–2020 (df)
+-   [Imputation/changi_imp_final.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/changi_imp_final.csv) :Bimonthly LST values for Changi, Singapore, 2000–2020 (df)
 
 ### Custom Functions:
 
@@ -224,15 +224,15 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 ### For Code Reproducibility:
 
--   [LSTM_window_9.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%209.ipynb)
+-   [LSTM_window_9.ipynb](https://github.com/ataraxiart/ST5188/blob/main/Code/LSTMs/With%20rolling%20window/LSTM_window_9.ipynb)
 
--   [LSTM_window_10.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%2010.ipynb)
+-   [LSTM_window_10.ipynb](https://github.com/ataraxiart/ST5188/blob/main/Code/LSTMs/With%20rolling%20window/LSTM_window_10.ipynb)
 
--   [LSTM_window_11.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%2011.ipynb)
+-   [LSTM_window_11.ipynb](https://github.com/ataraxiart/ST5188/blob/main/Code/LSTMs/With%20rolling%20window/LSTM_window_11.ipynb)
 
--   [LSTM_window_12.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%2012.ipynb)
+-   [LSTM_window_12.ipynb](https://github.com/ataraxiart/ST5188/blob/main/Code/LSTMs/With%20rolling%20window/LSTM_window_12.ipynb)
 
--   [LSTM_window_13.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstms%20w%20window%20%3D%2013.ipynb)
+-   [LSTM_window_13.ipynb](https://github.com/ataraxiart/ST5188/blob/main/Code/LSTMs/With%20rolling%20window/LSTM_window_13.ipynb)
 
 ### Dependencies:
 
@@ -250,11 +250,11 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 ------------------------------------------------------------------------
 
-## Bayesian GP: [Code/Bayesian GP/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Bayesian GP)
+## Bayesian GP: [Code/Bayesian GP/](https://github.com/ataraxiart/ST5188/tree/main/Code/Bayesian%20GP)
 
-### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/)
+### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/main/Data/Final)
 
--   [final_CHANGI_long.csv](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Data/Final/final_CHANGI_long.csv)
+-   [final_CHANGI_long.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/final_CHANGI_long.csv)
 
 ### Functions:
 
@@ -298,31 +298,31 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 #### Scripts:
 
--   [lag_experiment.R](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/spTimer/GP%20Experiment%20Files/Initial%20Experiments/lag_experiment.R) :Determines the suitable number of lag terms to be considered by testing lags 1-6 using rolling windows. It returned RMSE at forecast horizons (1,3,6,9,12 months)
+-   [lag_experiment.R](https://github.com/ataraxiart/ST5188/blob/main/Code/Bayesian%20GP/Initial%20Experiments/lag_experiment.R) :Determines the suitable number of lag terms to be considered by testing lags 1-6 using rolling windows. It returned RMSE at forecast horizons (1,3,6,9,12 months)
 
--   [covariance_experiment.R](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/spTimer/GP%20Experiment%20Files/Initial%20Experiments/covariance_experiment.R) :Performs tests using covariance functions (exponential, gaussian,spherical and matern) using the optimal lag count from `lag_experiment.R`
+-   [covariance_experiment.R](https://github.com/ataraxiart/ST5188/blob/main/Code/Bayesian%20GP/Initial%20Experiments/covariance_experiment.R) :Performs tests using covariance functions (exponential, gaussian,spherical and matern) using the optimal lag count from `lag_experiment.R`
 
     Returns RMSE values to identify the best performing function.
 
     **Key Function:** `run_cov_experiment()` evaluates the covariance functions by using 3 lags on rolling windows and outputs RMSE results for forecast steps (1,3,6,9,12) and overall performance
 
--   [spatial_decay_grid_search_changi_experiment.R](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/spTimer/GP%20Experiment%20Files/Initial%20Experiments/spatial_decay_grid_search_changi_experiment.R) :Tests using fixed spatial decay ($\phi \epsilon [0.1,2]$) and taking the assumptions from the previous scripts for best lag count and covariance function. This returns reasonable range for $\phi$
+-   [spatial_decay_grid_search_changi_experiment.R](https://github.com/ataraxiart/ST5188/blob/main/Code/Bayesian%20GP/Initial%20Experiments/spatial_decay_grid_search_changi_experiment.R) :Tests using fixed spatial decay ($\phi \epsilon [0.1,2]$) and taking the assumptions from the previous scripts for best lag count and covariance function. This returns reasonable range for $\phi$
 
--   [spatial_decay_bayesian_mcmc_changi_experiment.R](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/spTimer/GP%20Experiment%20Files/Initial%20Experiments/spatial_decay_bayesian_mcmc_changi_experiment.R) :Tests Bayesian priors for spatial decay (Gamma distributions) and returns best prior distribution for $\phi$
+-   [spatial_decay_bayesian_mcmc_changi_experiment.R](https://github.com/ataraxiart/ST5188/blob/main/Code/Bayesian%20GP/Initial%20Experiments/spatial_decay_bayesian_mcmc_changi_experiment.R) :Tests Bayesian priors for spatial decay (Gamma distributions) and returns best prior distribution for $\phi$
 
 #### For Code Reproducibility:
 
-Run [Run_Initial_Experimentation.R](https://github.com/ataraxiart/ST5188/blob/761379f4ba26832af02c9727b4bfe28c24011a99/Code/spTimer/GP%20Experiment%20Files/Initial%20Experiments/Run_Initial_Experimentation.R)
+Run [Run_Initial_Experimentation.R](https://github.com/ataraxiart/ST5188/blob/main/Code/Bayesian%20GP/Initial%20Experiments/run_initial_experimentation)
 
 ### [Final Stage Experimentation]
 
 #### Scripts with its specific functions:
 
--   [final_gp_rolling_window_experiment.R](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/spTimer/GP%20Experiment%20Files/final_gp_rolling_window_experiment.R) :
+-   [final_gp_rolling_window_experiment.R](https://github.com/ataraxiart/ST5188/blob/main/Code/Bayesian%20GP/final_gp_rolling_window_experiment.R) :
 
     -   `run_final_gp()` :Performs cross-window validation of the optimized GP model across multiple historical window sizes (9-13 years) to assess temporal robustness.
 
--   [final_gp_23_2_experiment.R](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/spTimer/GP%20Experiment%20Files/final_gp_23_2_experiment.R)
+-   [final_gp_23_2_experiment.R](https://github.com/ataraxiart/ST5188/blob/main/Code/Bayesian%20GP/final_gp_23_2_experiment.R)
 
     -   `run_bayesian_phi()` :To use Bayesian to obtain $\phi$ list
 
@@ -330,7 +330,7 @@ Run [Run_Initial_Experimentation.R](https://github.com/ataraxiart/ST5188/blob/76
 
     #### For Code Reproducibility:
 
-    Run [Run_Final_Experimentation.R](https://github.com/ataraxiart/ST5188/blob/761379f4ba26832af02c9727b4bfe28c24011a99/Code/spTimer/GP%20Experiment%20Files/Run_Final_Experimentation.R)
+    Run [Run_Final_Experimentation.R](https://github.com/ataraxiart/ST5188/blob/main/Code/Bayesian%20GP/run_final_experimentation.R)
 
 ### Dependencies for both stages:
 
