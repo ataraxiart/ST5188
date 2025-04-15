@@ -108,27 +108,27 @@ Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bay
 
 ### Scripts :
 
--   [Changi imputed and restructured.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/CHANGI%20IMPUTED%20DATA%20RESTRUCTURE.R) :Restructures imputed Land Surface Temperature data into a complete data format with consistent formatting and no missing location data combinations.
+-   [changi_imputed_and_restructured.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/CHANGI%20IMPUTED%20DATA%20RESTRUCTURE.R) :Restructures imputed Land Surface Temperature data into a complete data format with consistent formatting and no missing location data combinations.
 
--   [unoptimized ARIMA.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/unoptimized%20ARIMA.R): to handle basic spatio temporal forecasting for temperature data across geographic points.
+-   [unoptimized_ARIMA.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/unoptimized%20ARIMA.R): to handle basic spatio temporal forecasting for temperature data across geographic points.
 
     -   `process_neighborhood()`: Main function for training and forecasting per location
 
     -   `convert_period_to_date()`: Converts period in string format to `Date` as objects.
 
--   [optimized ARIMA.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/optimized%20ARIMA.R): Automates optimized ARIMA modeling for 30 geographic points also generating seasonally adjusted temperature forecasts with accuracy metrics
+-   [optimized_ARIMA.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/optimized%20ARIMA.R): Automates optimized ARIMA modeling for 30 geographic points also generating seasonally adjusted temperature forecasts with accuracy metrics
 
     -   `calculate_rmse()`: Calculates the Root Mean Squared Error (RMSE) values using the observed and forecasted value.
 
     -   Grid Search loop: Tests best ARIMA order point by iterating over each point and returning the RMSE value.
 
--   [Optimized ARIMA with RMSE.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/Optimized%20ARIMA%20with%20RMSE.R) : Model is evaluated and compared by having primary output as RMSE matrices across horizons
+-   [optimized_ARIMA_with_RMSE.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/Optimized%20ARIMA%20with%20RMSE.R) : Model is evaluated and compared by having primary output as RMSE matrices across horizons
 
--   [Rolling window and RMSE.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/Rolling%20window%20and%20RMSE.R): Implements time-based cross validation by testing models on multiple training windows (9-13 years) by taking 10 random samples per window. It also calculates RMSE for each forecast horizon (1/3/9/12 months) across all 30 points.
+-   [rolling_window_and_RMSE.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/Rolling%20window%20and%20RMSE.R): Implements time-based cross validation by testing models on multiple training windows (9-13 years) by taking 10 random samples per window. It also calculates RMSE for each forecast horizon (1/3/9/12 months) across all 30 points.
 
     ### For Code Reproducibility:
 
-    [Run_ARIMA.R](https://github.com/ataraxiart/ST5188/blob/0b034138d2feb9137eda013210dd461794bfdcfc/Code/ARIMA/Run_ARIMA.R): Master file to execute the scripts for ARIMA portion
+    [run_ARIMA.R](https://github.com/ataraxiart/ST5188/blob/0b034138d2feb9137eda013210dd461794bfdcfc/Code/ARIMA/Run_ARIMA.R): Master file to execute the scripts for ARIMA portion
 
     ### Dependencies:
 
