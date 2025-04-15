@@ -46,7 +46,7 @@ More details about the Bayesian GP Model can be found here:
 
 ------------------------------------------------------------------------
 
-### Preprocessing & Explanatory Data Analysis
+### Preprocessing & Explanatory Data Analysis: [Code/Preprocessing/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing)
 
 -   [Code/Preprocessing/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing): This directory contains the R and Python scripts used for data preprocessing and EDA.
 
@@ -102,7 +102,7 @@ More details about the Bayesian GP Model can be found here:
 
 ## Baseline Models
 
-### Autoregressive Integrated Moving Average (ARIMA) [Code/ARIMA/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Final/ARIMA)
+### Autoregressive Integrated Moving Average (ARIMA): [Code/ARIMA/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA)
 
 ### Data Source: [Data/Final/Imputation](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation)
 
@@ -110,7 +110,7 @@ More details about the Bayesian GP Model can be found here:
 
 -   [imp_test_set.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation/imp_test_set.csv): Testing dataset
 
-### Scripts :
+### Scripts:
 
 -   [changi_imputed_and_restructured.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/CHANGI%20IMPUTED%20DATA%20RESTRUCTURE.R) :Restructures imputed Land Surface Temperature data into a complete data format with consistent formatting and no missing location data combinations.
 
@@ -151,10 +151,10 @@ More details about the Bayesian GP Model can be found here:
     | `here`      | 1.0.1   |                                |
     | `tibble`    | 3.2.1   |                                |
 
-### LSTMs [Code/LSTM/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Final/LSTM)
+### LSTMs: [Code/LSTM/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Final/LSTM)
 
 
-### \>Without Sliding Window [Code/LSTM/Without rolling window/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/Without_rolling_window)
+### \>Without Sliding Window: [Code/LSTM/Without rolling window/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/Without_rolling_window)
 
 ### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation)
 
@@ -185,7 +185,7 @@ More details about the Bayesian GP Model can be found here:
     | `pandas`  | 2.0.3   |
     | `numPy`   | 1.23.5  |
 
-### \>With Rolling Windows [Code/LSTM/With rolling window/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/With_rolling_window)
+### \>With Rolling Window: [Code/LSTM/With rolling window/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/With_rolling_window)
 
 In this LSTM is evaluated by using different historical window sizes (9 to 13 years) for forecasting Land Surface Temperature (LST) 2 years ahead (12 bimonthly steps). Each window size is tested with and without dropout regularization.
 
@@ -236,7 +236,7 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 ### Dependencies:
 
--   Python (Version 3.9.6): Libraries used in this portion are
+-   **Python (Version 3.9.6): Libraries used in this portion are:**
 
     | Packages       | Version |
     |----------------|---------|
@@ -247,27 +247,12 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
     | `Shapely`      | 2.0.7   |
     | `Scikit-learn` | 1.6.1   |
 
-### \>For Merging RMS stats
-
-#### Data Source: [LSTMs/With rolling window](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window)
-
--   Without Dropout: `rmse_9.csv`, `rmse_10.csv`, ..., `rmse_13.csv`
-
--   With Dropout: `rmse_dropout_9.csv`, `rmse_dropout_10.csv`, ..., `rmse_dropout_13.csv`
-
-### For Code Reproducibility:
-
-[code_to_merge_merge_the_rmse_stats](https://github.com/ataraxiart/ST5188/blob/80c76fe6abc5eccbad0ca3edb13266603fb7df4f/Code/LSTMs/With%20rolling%20window/code%20to%20merge%20the%20rmse%20stats.ipynb)
-
-### Dependencies
-
--   **Python (Version 3.9.6)** with Pandas 2.2.3
 
 ------------------------------------------------------------------------
 
-## Gaussian Process: Spatial- Temporal Modeling
+## Gaussian Process: Spatio-temporal Modeling
 
-### Data Source: Data/Final
+### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/)
 
 -   [final_CHANGI_long.csv](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Data/Final/final_CHANGI_long.csv)
 
@@ -309,7 +294,7 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
     -   `get_RMSE_for_specific_time_step()` :To calculate RMSE for specific forecast time steps.
 
-### [Initial Stage Experimentation]{.underline}
+### [Initial Stage Experimentation]
 
 #### Scripts:
 
@@ -336,7 +321,7 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 Run [Run_Initial_Experimentation.R](https://github.com/ataraxiart/ST5188/blob/761379f4ba26832af02c9727b4bfe28c24011a99/Code/spTimer/GP%20Experiment%20Files/Initial%20Experiments/Run_Initial_Experimentation.R)
 
-### [Final Stage Experimentation]{.underline}
+### [Final Stage Experimentation]
 
 #### Scripts with its specific functions:
 
