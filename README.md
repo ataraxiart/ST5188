@@ -250,7 +250,7 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 ------------------------------------------------------------------------
 
-## Gaussian Process: Spatio-temporal Modeling
+## Bayesian GP: [Code/Bayesian GP/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Bayesian GP)
 
 ### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/)
 
@@ -310,13 +310,6 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 -   [spatial_decay_bayesian_mcmc_changi_experiment.R](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/spTimer/GP%20Experiment%20Files/Initial%20Experiments/spatial_decay_bayesian_mcmc_changi_experiment.R) :Tests Bayesian priors for spatial decay (Gamma distributions) and returns best prior distribution for $\phi$
 
-#### Output Files:
-
--   `cov_experiment.csv` - RMSE results for covariance function comparison
--   `lag_experiment.csv` - RMSE results for lag term comparison
--   `grid_search_changi_experiment.csv` - RMSE results for spatial decay parameter grid search
--   `hyperparameter_changi_experiment.csv` - RMSE results for Bayesian prior comparison
-
 #### For Code Reproducibility:
 
 Run [Run_Initial_Experimentation.R](https://github.com/ataraxiart/ST5188/blob/761379f4ba26832af02c9727b4bfe28c24011a99/Code/spTimer/GP%20Experiment%20Files/Initial%20Experiments/Run_Initial_Experimentation.R)
@@ -324,12 +317,6 @@ Run [Run_Initial_Experimentation.R](https://github.com/ataraxiart/ST5188/blob/76
 ### [Final Stage Experimentation]
 
 #### Scripts with its specific functions:
-
--   [hyperparameter_changi_experiment.R](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/spTimer/GP%20Experiment%20Files/hyperparameter_changi_experiment.R): This is for initial Bayesian exploration of spatial decay $(\phi)$ priors by testing for 7 Gamma prior distributions for $\phi$.
-
-    -   `run_hyperparameter_experiment()` :tests different Bayesian priors for the spatial decay parameter ($\phi$) to identify which prior distribution yields the best model performance.
-
-    -   `get_RMSE_for_specific_time_step()` :Calculates the RMSE for predictions at specific forecast horizons across all spatial locations.
 
 -   [final_gp_rolling_window_experiment.R](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/spTimer/GP%20Experiment%20Files/final_gp_rolling_window_experiment.R) :
 
