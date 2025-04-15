@@ -6,9 +6,13 @@
 
 ### Overview
 
-Focusing on Singapore region, this project is focused on mid-term LST forecasting (6-24 months ahead) by using 562 satellite images (TIF files) from Google Earth Engine (GEE) as our dataset. Exploratory Data Analysis (EDA) is performed on the data initially to understand the different characteristics present in the data.
+With Singapore as our focus, this project is focused on mid-term LST forecasting (6-24 months ahead) by using 562 satellite images (TIF files) from Google Earth Engine (GEE) as our dataset. This dataset is open-source and we have hosted the necessary files in our repo. Exploratory Data Analysis (EDA) is performed on the data initially to understand the different characteristics present in the data.
 
-Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bayesian GP (Gaussian Process) Model.
+Thereafter, baseline models like ARIMA and LSTMs were fitted to our preprocessed data. We compared these baseline results with the results obtained from our proposed solution - a Bayesian GP (Gaussian Process) Model. 
+
+More details about the Bayesian GP Model can be found here:
+
+[spTimer: Spatio-Temporal Bayesian Modeling Using R](https://doi.org/10.18637/jss.v063.i15)
 
 
 
@@ -26,7 +30,7 @@ Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bay
 
 -   Shape file:
 
-    -   [Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp): Shape file containing the boundaries of Singapore's subzones.
+    -   [Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp): Shape file (More accurately, collection of files) containing the boundaries of Singapore's subzones.
 
 -   Summary statistics of (missing values):
 
@@ -42,7 +46,7 @@ Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bay
 
 ------------------------------------------------------------------------
 
-### Preprocessing & Explanatory Data Analysis
+### Preprocessing & Explanatory Data Analysis: [Code/Preprocessing/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing)
 
 -   [Code/Preprocessing/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing): This directory contains the R and Python scripts used for data preprocessing and EDA.
 
@@ -98,7 +102,7 @@ Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bay
 
 ## Baseline Models
 
-### Autoregressive Integrated Moving Average (ARIMA)
+### Autoregressive Integrated Moving Average (ARIMA): [Code/ARIMA/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA)
 
 ### Data Source: [Data/Final/Imputation](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation)
 
@@ -106,7 +110,7 @@ Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bay
 
 -   [imp_test_set.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation/imp_test_set.csv): Testing dataset
 
-### Scripts :
+### Scripts:
 
 -   [changi_imputed_and_restructured.R](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/ARIMA/CHANGI%20IMPUTED%20DATA%20RESTRUCTURE.R) :Restructures imputed Land Surface Temperature data into a complete data format with consistent formatting and no missing location data combinations.
 
@@ -147,15 +151,16 @@ Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bay
     | `here`      | 1.0.1   |                                |
     | `tibble`    | 3.2.1   |                                |
 
-### LSTMs
+### LSTMs: [Code/LSTM/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Final/LSTM)
 
-### \>Without Sliding Window
+
+### \>Without Sliding Window: [Code/LSTM/Without rolling window/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/Without_rolling_window)
 
 ### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation)
 
--   [Imputation/imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation/imp_train_set.csv): True values (changi_df)
+-   [Imputation/imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/Imputation/imp_train_set.csv): True values (`changi_df`)
 
--   [TT Split/changi_test_long.csv](https://github.com/ataraxiart/ST5188/blob/6dcff65326979106e7bccc3ff97c09c62da37469/Data/Final/TT%20Split/changi_test_long.csv): Predicted values ( pred_df)
+-   [TT Split/changi_test_long.csv](https://github.com/ataraxiart/ST5188/blob/6dcff65326979106e7bccc3ff97c09c62da37469/Data/Final/TT%20Split/changi_test_long.csv): Predicted values (`pred_df`)
 
 ### Custom Functions created:
 
@@ -168,13 +173,7 @@ Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bay
 
 ### For Code Reproducibility:
 
-[LSTM without sliding window.ipynb](https://github.com/ataraxiart/ST5188/blob/6dcff65326979106e7bccc3ff97c09c62da37469/Code/LSTMs/Without%20rolling%20window/LSTM%20without%20sliding%20window.ipynb)
-
-### Output files
-
--   [rmse_lstm_no_dropout.csv](https://github.com/ataraxiart/ST5188/blob/6dcff65326979106e7bccc3ff97c09c62da37469/Code/LSTMs/Without%20rolling%20window/rmse_lstm_no_dropout.csv) : RMSE values for baseline model across forecast horizons (1 -12 months)
-
--   [rmse_lstm_dropout.csv](https://github.com/ataraxiart/ST5188/blob/6dcff65326979106e7bccc3ff97c09c62da37469/Code/LSTMs/Without%20rolling%20window/rmse_lstm_dropout.csv): RMSE values for dropout performed model
+[LSTM_without_sliding_window.ipynb](https://github.com/ataraxiart/ST5188/blob/6dcff65326979106e7bccc3ff97c09c62da37469/Code/LSTMs/Without%20rolling%20window/LSTM%20without%20sliding%20window.ipynb)
 
 ### Dependencies
 
@@ -186,7 +185,7 @@ Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bay
     | `pandas`  | 2.0.3   |
     | `numPy`   | 1.23.5  |
 
-### \>With Rolling Windows
+### \>With Rolling Window: [Code/LSTM/With rolling window/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/LSTM/With_rolling_window)
 
 In this LSTM is evaluated by using different historical window sizes (9 to 13 years) for forecasting Land Surface Temperature (LST) 2 years ahead (12 bimonthly steps). Each window size is tested with and without dropout regularization.
 
@@ -225,34 +224,19 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 ### For Code Reproducibility:
 
--   [lstm w window = 9.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%209.ipynb)
+-   [LSTM_window_9.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%209.ipynb)
 
--   [lstm w window = 10.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%2010.ipynb)
+-   [LSTM_window_10.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%2010.ipynb)
 
--   [lstm w window = 11.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%2011.ipynb)
+-   [LSTM_window_11.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%2011.ipynb)
 
--   [lstm w window = 12.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%2012.ipynb)
+-   [LSTM_window_12.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstm%20w%20window%20%3D%2012.ipynb)
 
--   [lstms w window = 13.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstms%20w%20window%20%3D%2013.ipynb)
-
-### Output files:
-
-| **Window Size** | **Dropout** | **Output File**       |
-|:----------------|:------------|:----------------------|
-| 9               | No          | `rmse_9.csv`          |
-| 9               | Yes         | `rmse_dropout_9.csv`  |
-| 10              | No          | `rmse_10.csv`         |
-| 10              | Yes         | `rmse_dropout_10.csv` |
-| 11              | No          | `rmse_11.csv`         |
-| 11              | Yes         | `rmse_dropout_11.csv` |
-| 12              | No          | `rmse_12.csv`         |
-| 12              | Yes         | `rmse_dropout_12.csv` |
-| 13              | No          | `rmse_13.csv`         |
-| 13              | Yes         | `rmse_dropout_13.csv` |
+-   [LSTM_window_13.ipynb](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/lstms%20w%20window%20%3D%2013.ipynb)
 
 ### Dependencies:
 
--   Python (Version 3.9.6): Libraries used in this portion are
+-   **Python (Version 3.9.6): Libraries used in this portion are:**
 
     | Packages       | Version |
     |----------------|---------|
@@ -263,33 +247,12 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
     | `Shapely`      | 2.0.7   |
     | `Scikit-learn` | 1.6.1   |
 
-### \>For Merging RMS stats
-
-#### Data Source: [LSTMs/With rolling window](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window)
-
--   Without Dropout: `rmse_9.csv`, `rmse_10.csv`, ..., `rmse_13.csv`
-
--   With Dropout: `rmse_dropout_9.csv`, `rmse_dropout_10.csv`, ..., `rmse_dropout_13.csv`
-
-### For Code Reproducibility:
-
-[code to merge merge the rmse stats](https://github.com/ataraxiart/ST5188/blob/80c76fe6abc5eccbad0ca3edb13266603fb7df4f/Code/LSTMs/With%20rolling%20window/code%20to%20merge%20the%20rmse%20stats.ipynb)
-
-### Output files:
-
--   [merged_rmse_df](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/merged_rmse.csv) :Combined RMSE results obtained by models without dropout
-
--   [merged_rmse_dropout_df](https://github.com/ataraxiart/ST5188/blob/eeeb4d161c39c31ce857e4c3e009be959bd07b5e/Code/LSTMs/With%20rolling%20window/merged_rmse_dropout.csv) : Combined RMSE results obtained by models with dropout
-
-### Dependencies
-
--   **Python (Version 3.9.6)** with Pandas 2.2.3
 
 ------------------------------------------------------------------------
 
-## Gaussian Process: Spatial- Temporal Modeling
+## Gaussian Process: Spatio-temporal Modeling
 
-### Data Source: Data/Final
+### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/c0f4a45fb91d42df8bf57621511178a3d47f6983/Data/Final/)
 
 -   [final_CHANGI_long.csv](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Data/Final/final_CHANGI_long.csv)
 
@@ -331,7 +294,7 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
     -   `get_RMSE_for_specific_time_step()` :To calculate RMSE for specific forecast time steps.
 
-### [Initial Stage Experimentation]{.underline}
+### [Initial Stage Experimentation]
 
 #### Scripts:
 
@@ -358,7 +321,7 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 Run [Run_Initial_Experimentation.R](https://github.com/ataraxiart/ST5188/blob/761379f4ba26832af02c9727b4bfe28c24011a99/Code/spTimer/GP%20Experiment%20Files/Initial%20Experiments/Run_Initial_Experimentation.R)
 
-### [Final Stage Experimentation]{.underline}
+### [Final Stage Experimentation]
 
 #### Scripts with its specific functions:
 
