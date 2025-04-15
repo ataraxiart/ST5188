@@ -66,21 +66,15 @@ Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bay
 
 -   **R (Version 4.4.1)**:
 
-    +----------------------+----------------------+-----------------------------------------------------------+
-    | Packages             | Version              | Comments                                                  |
-    +======================+======================+===========================================================+
-    | `terra`              | 1.8.21               | Manipulating spatial data in raster and vector data types |
-    +----------------------+----------------------+-----------------------------------------------------------+
-    | `sf`                 | 1.0-16               | Encoding and analysing spatial data                       |
-    +----------------------+----------------------+-----------------------------------------------------------+
-    | `dplyr`              | 1.1.4                | Simplifies data manipulation                              |
-    +----------------------+----------------------+-----------------------------------------------------------+
-    | `data.table`         | 1.16.0               | Aggregating large datasets                                |
-    +----------------------+----------------------+-----------------------------------------------------------+
-    | `pbapply`            | 1.7-2                | For progress bar                                          |
-    +----------------------+----------------------+-----------------------------------------------------------+
-    | `reticulate`         | 1.41.0               | To convert .ipnyb files to .py format                     |
-    +----------------------+----------------------+-----------------------------------------------------------+
+| Packages      | Version  | Comments                                                  |
+|---------------|----------|-----------------------------------------------------------|
+| `terra`       | 1.8.21   | Manipulating spatial data in raster and vector data types |
+| `sf`          | 1.0-16   | Encoding and analysing spatial data                       |
+| `dplyr`       | 1.1.4    | Simplifies data manipulation                              |
+| `data.table`  | 1.16.0   | Aggregating large datasets                                |
+| `pbapply`     | 1.7-2    | For progress bar                                          |
+| `reticulate`  | 1.41.0   | To convert `.ipynb` files to `.py` format                 |
+
 
 -   **Python (Version 3.9.6)**-For Python script [`create_lst_animation.py`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/create_lst_animation.py)
 
@@ -94,13 +88,11 @@ Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bay
 
     For [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/Preprocessing/create_na_animation.py),it depends on additionally these 2 libraries:
 
-    +----------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
-    | Packages             | Version              | Comments                                                                                                                                             |
-    +======================+======================+======================================================================================================================================================+
-    | `geopandas`          | 1.0.1                | For geospatial vector data (like shapefiles or GeoJSON) which extends functionality of pandas to handle geographic data                              |
-    +----------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
-    | `pandas`             | \>=1.4.0             | Fundamental library for data manipulation and analysis providing data structures like Data Frames and Series,essential for working with tabular data |
-    +----------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Packages     | Version   | Comments                                                                                                                                      |
+|--------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| `geopandas`  | 1.0.1     | For geospatial vector data (like shapefiles or GeoJSON); extends functionality of pandas to handle geographic data                          |
+| `pandas`     | >=1.4.0   | Fundamental library for data manipulation and analysis, providing data structures like DataFrames and Series — essential for tabular data   |
+
 
 ------------------------------------------------------------------------
 
