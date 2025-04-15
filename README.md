@@ -8,7 +8,9 @@
 
 Focusing on Singapore region, this project is focused on mid-term LST forecasting (6-24 months ahead) by using 562 satellite images (TIF files) from Google Earth Engine (GEE) as our dataset. Exploratory Data Analysis (EDA) is performed on the data initially to understand the different characteristics present in the data.
 
-Baseline models like ARIMA, LSTMs and Gaussian Process is performed
+Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bayesian GP (Gaussian Process) Model.
+
+
 
 ------------------------------------------------------------------------
 
@@ -82,21 +84,13 @@ Baseline models like ARIMA, LSTMs and Gaussian Process is performed
 
 -   **Python (Version 3.9.6)**-For Python script [`create_lst_animation.py`](https://github.com/ataraxiart/ST5188/blob/c0f4a45fb91d42df8bf57621511178a3d47f6983/Code/Preprocessing/create_lst_animation.py)
 
-    +--------------+-----------+-----------------------------------------------------------------+----------------------------------------------------------+
-    | Packages     | Version   | Comments                                                        | Key classes                                              |
-    +==============+===========+=================================================================+==========================================================+
-    | `matplotlib` | 3.9.4     | For creating plots and animations.                              | -   pyplot                                               |
-    |              |           |                                                                 |                                                          |
-    |              |           |                                                                 | -   colors.LinearSegmentedColormap                       |
-    |              |           |                                                                 |                                                          |
-    |              |           |                                                                 | -   patches                                              |
-    +--------------+-----------+-----------------------------------------------------------------+----------------------------------------------------------+
-    | `numpy`      | 1.26.4    | For numerical operations, like handling arrays of image data    | \-                                                       |
-    +--------------+-----------+-----------------------------------------------------------------+----------------------------------------------------------+
-    | `os`         | built in  | for interacting with operating system, like handling file paths | \-                                                       |
-    +--------------+-----------+-----------------------------------------------------------------+----------------------------------------------------------+
-    | `imageio`    | 2.37.0    | For reading and writing image files essential for animated GIFs | \-                                                       |
-    +--------------+-----------+-----------------------------------------------------------------+----------------------------------------------------------+
+| Packages     | Version   | Comments                                                        | Key Classes                                      |
+|--------------|-----------|------------------------------------------------------------------|--------------------------------------------------|
+| `matplotlib` | 3.9.4     | For creating plots and animations.                              | - `pyplot`<br>- `colors.LinearSegmentedColormap`<br>- `patches` |
+| `numpy`      | 1.26.4    | For numerical operations, like handling arrays of image data    | —                                                |
+| `os`         | built-in  | For interacting with operating system, like handling file paths | —                                                |
+| `imageio`    | 2.37.0    | For reading and writing image files essential for animated GIFs | —                                                |
+
 
     For [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/Preprocessing/create_na_animation.py),it depends on additionally these 2 libraries:
 
