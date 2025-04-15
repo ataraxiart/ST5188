@@ -86,7 +86,7 @@ Baseline models like ARIMA and LSTMs are used. At the end, our solution is a Bay
 | `imageio`    | 2.37.0    | For reading and writing image files essential for animated GIFs | —                                                |
 
 
-    For [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/Preprocessing/create_na_animation.py),it depends on additionally these 2 libraries:
+- For [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/8c9dcaf66ee1c07458b2ab1da49eb53a81b0cad8/Code/Preprocessing/create_na_animation.py),it depends on additionally these 2 libraries:
 
 | Packages     | Version   | Comments                                                                                                                                      |
 |--------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------|
