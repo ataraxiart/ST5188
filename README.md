@@ -8,13 +8,11 @@
 
 With Singapore as our focus, this project is focused on mid-term LST forecasting (6-24 months ahead) by using 562 satellite images (TIF files) from Google Earth Engine (GEE) as our dataset. This dataset is open-source and we have hosted the necessary files in our repo. Exploratory Data Analysis (EDA) is performed on the data initially to understand the different characteristics present in the data.
 
-Thereafter, baseline models like ARIMA and LSTMs were fitted to our preprocessed data. We compared these baseline results with the results obtained from our proposed solution - a Bayesian GP (Gaussian Process) Model. 
+Thereafter, baseline models like ARIMA and LSTMs were fitted to our preprocessed data. We compared these baseline results with the results obtained from our proposed solution - a Bayesian GP (Gaussian Process) Model.
 
 More details about the Bayesian GP Model can be found here:
 
 [spTimer: Spatio-Temporal Bayesian Modeling Using R](https://doi.org/10.18637/jss.v063.i15)
-
-
 
 ------------------------------------------------------------------------
 
@@ -70,33 +68,30 @@ More details about the Bayesian GP Model can be found here:
 
 -   **R (Version 4.4.1)**:
 
-| Packages      | Version  | Comments                                                  |
-|---------------|----------|-----------------------------------------------------------|
-| `terra`       | 1.8.21   | Manipulating spatial data in raster and vector data types |
-| `sf`          | 1.0-16   | Encoding and analysing spatial data                       |
-| `dplyr`       | 1.1.4    | Simplifies data manipulation                              |
-| `data.table`  | 1.16.0   | Aggregating large datasets                                |
-| `pbapply`     | 1.7-2    | For progress bar                                          |
-| `reticulate`  | 1.41.0   | To convert `.ipynb` files to `.py` format                 |
-
+| Packages | Version | Comments |
+|--------------|--------------|---------------------------------------------|
+| `terra` | 1.8.21 | Manipulating spatial data in raster and vector data types |
+| `sf` | 1.0-16 | Encoding and analysing spatial data |
+| `dplyr` | 1.1.4 | Simplifies data manipulation |
+| `data.table` | 1.16.0 | Aggregating large datasets |
+| `pbapply` | 1.7-2 | For progress bar |
+| `reticulate` | 1.41.0 | To convert `.ipynb` files to `.py` format |
 
 -   **Python (Version 3.9.6)**-For Python script [`create_lst_animation.py`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/create_lst_animation.py)
 
-| Packages     | Version   | Comments                                                        | Key Classes                                      |
-|--------------|-----------|------------------------------------------------------------------|--------------------------------------------------|
-| `matplotlib` | 3.9.4     | For creating plots and animations.                              | - `pyplot`<br>- `colors.LinearSegmentedColormap`<br>- `patches` |
-| `numpy`      | 1.26.4    | For numerical operations, like handling arrays of image data    | —                                                |
-| `os`         | built-in  | For interacting with operating system, like handling file paths | —                                                |
-| `imageio`    | 2.37.0    | For reading and writing image files essential for animated GIFs | —                                                |
+| Packages | Version | Comments | Key Classes |
+|-------------|-------------|---------------------------|--------------------|
+| `matplotlib` | 3.9.4 | For creating plots and animations. | \- `pyplot`<br>- `colors.LinearSegmentedColormap`<br>- `patches` |
+| `numpy` | 1.26.4 | For numerical operations, like handling arrays of image data | — |
+| `os` | built-in | For interacting with operating system, like handling file paths | — |
+| `imageio` | 2.37.0 | For reading and writing image files essential for animated GIFs | — |
 
+-   For [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/create_na_animation.py),it depends on additionally these 2 libraries:
 
-- For [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/create_na_animation.py),it depends on additionally these 2 libraries:
-
-| Packages     | Version   | Comments                                                                                                                                      |
-|--------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| `geopandas`  | 1.0.1     | For geospatial vector data (like shapefiles or GeoJSON); extends functionality of pandas to handle geographic data                          |
-| `pandas`     | >=1.4.0   | Fundamental library for data manipulation and analysis, providing data structures like DataFrames and Series — essential for tabular data   |
-
+| Packages | Version | Comments |
+|----------|----------|---------------------------------------------------|
+| `geopandas` | 1.0.1 | For geospatial vector data (like shapefiles or GeoJSON); extends functionality of pandas to handle geographic data |
+| `pandas` | \>=1.4.0 | Fundamental library for data manipulation and analysis, providing data structures like DataFrames and Series — essential for tabular data |
 
 ------------------------------------------------------------------------
 
@@ -153,7 +148,6 @@ More details about the Bayesian GP Model can be found here:
 
 ### LSTMs: [Code/LSTMs/](https://github.com/ataraxiart/ST5188/tree/main/Code/LSTMs)
 
-
 ### \>Without Sliding Window: [Code/LSTMs/Without rolling window/](https://github.com/ataraxiart/ST5188/tree/main/Code/LSTMs/With%20rolling%20window)
 
 ### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/main/Data/Final/)
@@ -179,11 +173,13 @@ More details about the Bayesian GP Model can be found here:
 
 -   **Python (Version 3.9.6)**
 
-    | Packages  | Version |
-    |-----------|---------|
-    | `pyTorch` | 2.6.0   |
-    | `pandas`  | 2.0.3   |
-    | `numPy`   | 1.23.5  |
+    | Packages     | Version |
+    |--------------|---------|
+    | `subprocess` | 3.9.6   |
+    | `sys`        | 3.9.6   |
+    | `pyTorch`    | 2.6.0   |
+    | `pandas`     | 2.0.3   |
+    | `numPy`      | 1.23.5  |
 
 ### \>With Rolling Window: [Code/LSTMs/With rolling window/](https://github.com/ataraxiart/ST5188/tree/main/Code/LSTMs/With%20rolling%20window)
 
@@ -240,13 +236,14 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
     | Packages       | Version |
     |----------------|---------|
+    | `subprocess`   | 3.9.6   |
+    | `sys`          | 3.9.6   |
     | `PyTorch`      | 2.6.0   |
     | `Numpy`        | 1.26.4  |
     | `Pandas`       | 2.2.3   |
     | `GeoPandas`    | 1.0.1   |
     | `Shapely`      | 2.0.7   |
     | `Scikit-learn` | 1.6.1   |
-
 
 ------------------------------------------------------------------------
 
