@@ -112,9 +112,9 @@ We have decided to include the Landsat Satellite TIF files here because they hav
 
 ### Data Source: [Data/Final/Imputation](https://github.com/ataraxiart/ST5188/tree/main/Data/Final/Imputation)
 
--   [imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/imp_train_set.csv): Training dataset
+-   [imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/imp_train_set.csv): Training dataset for ARIMA/LSTM for Changi
 
--   [imp_test_set.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/imp_test_set.csv): Testing dataset
+-   [imp_test_set.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/imp_test_set.csv): Testing dataset for ARIMA for Changi
 
 ### Scripts:
 
@@ -163,9 +163,9 @@ We have decided to include the Landsat Satellite TIF files here because they hav
 
 ### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/main/Data/Final/)
 
--   [Imputation/imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/imp_train_set.csv): True values (`changi_df`)
+-   [Imputation/imp_train_set.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/imp_train_set.csv): Training dataset for ARIMA/LSTM for Changi (`changi_df`)
 
--   [TT Split/changi_test_long.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/TT%20Split/changi_test_long.csv): Predicted values (`pred_df`)
+-   [TT Split/changi_test_long.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/TT%20Split/changi_test_long.csv): Testing dataset for LSTM (`pred_df`)
 
 ### Custom Functions created:
 
@@ -198,8 +198,7 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 ### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/main/Data/Final/)
 
--   [Imputation/changi_imp_final.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/changi_imp_final.csv) :Bimonthly LST values for Changi, Singapore, 2000–2020 (df)
-
+-   [Imputation/changi_imp_final.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/Imputation/changi_imp_final.csv) : Training and Testing dataset for LSTM (Without Sliding Window) for Changi (`changi_df`)
 ### Custom Functions:
 
 #### Data Preparation
@@ -262,7 +261,7 @@ In this LSTM is evaluated by using different historical window sizes (9 to 13 ye
 
 ### Data Source: [Data/Final/](https://github.com/ataraxiart/ST5188/tree/main/Data/Final)
 
--   [final_CHANGI_long.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/final_CHANGI_long.csv)
+-   [final_CHANGI_long.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Final/final_CHANGI_long.csv): Training and Testing dataset for Bayesian GP model for Changi (`changi_df`)
 
 ### Functions:
 
