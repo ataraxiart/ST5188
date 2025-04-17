@@ -21,7 +21,9 @@ More details about the Bayesian GP Model can be found here:
 We have decided to include the Landsat Satellite TIF files here because they have been edited from their main source to include raw LST values. When downloading the TIF files from Google Earth Explorer, we implemented a pipeline which converted all the raw thermal bands into raw LST values. 
 
 **Source:** Google Earth Explorer's Landsat Database
+
 **Structure:** 562 TIF files from Landsat 7 and 8 from 2000 - 2024; Each TIF file contains raw LST values of Singapore's region demarcated by the shapefile as specified below, where there are some missing pixels due to cloud cover
+
 **Usage:** Data to be used to train our GP model solution for the prediction of future LST values
 
 [Data/](https://github.com/ataraxiart/ST5188/tree/main/Data) directory contains the TIF files and the preprocessed files derived from them.
