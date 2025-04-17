@@ -70,12 +70,14 @@ We have decided to include the Landsat Satellite TIF files here because they hav
     -   [`count_NA.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/count_NA.R): Analyses the images individually to determine the amount of missing Land Surface Temperature (LST) data (in terms of pixel count and percentage) for the specified subzone within that image.
     -   [`distribution_NA.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/distribution_NA.R): Here it tries to pinpoint exactly where within the subzone missing data is most concentrated. This is achieved by dividing the subzone into broad geographic areas and counting the NAs in each of those areas.
     -   [`create_na_animation.py`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/create_na_animation.py): This shows the visualisation of missing data over time each specified region.
-    -   [`spline_imputation.ipynb`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/spline_imputation.ipynb): This conducts spline imputation for temporal interpolation, required for baseline models.
+    -   [`spline_imputation.ipynb`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/spline_imputation.ipynb): This conducts spline imputation for temporal interpolation, required for baseline models. This file has to be run before `restructured_spline_data.R`. 
     -   [`restructured_spline_data.R`](https://github.com/ataraxiart/ST5188/blob/main/Code/Preprocessing/restructured_spline_data.R): This restructures the data acquired after spline imputation into chronological order. 
     ### For Code Reproducibility:
 
-    Knit [preprocess_main.rmd](https://github.com/ataraxiart/ST5188/blob/main/Code/preprocess_main.rmd)
-
+    Knit [preprocess_main.rmd](https://github.com/ataraxiart/ST5188/blob/main/Code/preprocess_main.rmd).
+    
+    Run 'For code reproducibility' chunk in `spline_imputation.ipynb` before running `restructured_spline_data.R`.
+    
     ### Dependencies
 
 -   **R (Version 4.4.1)**:
