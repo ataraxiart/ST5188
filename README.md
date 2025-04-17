@@ -36,7 +36,10 @@ We have decided to include the Landsat Satellite TIF files here because they hav
 
 -   Shape file:
 
-    -   [Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp](https://github.com/ataraxiart/ST5188/tree/main/Data/Misc/Subzone): Shape file (More accurately, collection of files) containing the boundaries of Singapore's subzones.
+    -   [Data/Misc/Subzone/MP14_SUBZONE_NO_SEA_PL.shp](https://github.com/ataraxiart/ST5188/tree/main/Data/Misc/Subzone): Shape file (More accurately, collection of files) containing the boundaries of Singapore's subzones
+ 
+-   Preprocessed Data Files:
+    - [ST5188/Data/Final](https://github.com/ataraxiart/ST5188/tree/main/Data/Final): Each file is documented in more detail in the sections below under the subsection "Data Source"
 
 -   Summary statistics of (missing values):
 
