@@ -49,7 +49,7 @@ We have decided to include the Landsat Satellite TIF files here because they hav
 
     -   [Data/Misc/JURONG WEST_NA_Results.csv](https://github.com/ataraxiart/ST5188/blob/main/Data/Misc/JURONG_WEST_NA_Results.csv)
 
--   intermediate RDS Cache
+-   Intermediate RDS Cache
 
     -   [Misc/SavedRDS/](https://github.com/ataraxiart/ST5188/tree/main/Data/Misc/SavedRDS): Directory to store intermediate RDS files during processing
 
