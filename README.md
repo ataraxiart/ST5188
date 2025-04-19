@@ -55,6 +55,13 @@ We have decided to include the Landsat Satellite TIF files here because they hav
 
 ------------------------------------------------------------------------
 
+### Preamble: Downloading Dependencies 
+
+-   To download dependencies on Python, one can use `pip install` followed by the package and version as the arguments:
+    - E.g `pip install numpy==1.23.5`
+- Tto download dependencies in R, one can use `install.packages` with the package, version and the following CRAN repository as the arguments:
+    - E.g. `remotes::install_version("terra", version = "1.8-21", repos = "http://cran.us.r-project.org")`
+
 ### Preprocessing & Explanatory Data Analysis: [Code/Preprocessing/](https://github.com/ataraxiart/ST5188/tree/main/Code/Preprocessing)
 
 -   [Code/Preprocessing/](https://github.com/ataraxiart/ST5188/tree/main/Code/Preprocessing): This directory contains the R and Python scripts used for data preprocessing and EDA.
